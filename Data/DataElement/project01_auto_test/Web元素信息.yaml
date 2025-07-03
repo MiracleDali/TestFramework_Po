@@ -1,0 +1,8 @@
+login: # 登录元素信息
+   username: ["name","_66_login"]
+   password: ["name","_66_password"]
+   login_button: ["name","_66_submit"]
+   login_error: ["xpath","//div[@class='error']"]
+   login_success: ["xpath","//div[@class='success']"]
+   login_error_message: ["xpath","//div[@class='error']/span"]
+   login_success_message: ["xpath","//div[@class='succes s']/span"]

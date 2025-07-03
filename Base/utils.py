@@ -1,0 +1,34 @@
+"""
+# file:     Base/utils.py
+# 读取-配置文件.ini
+# 打包zip文件
+"""
+
+from configparser import RawConfigParser
+from Base.basePath import BasePath
+import os
+import zipfile
+
+
+def read_config_ini(config_path):
+    """ 读取-配置文件.ini """
+    config = RawConfigParser()    # 创建RawConfigParser对象
+    config.read(config_path, encoding='utf-8')
+    return config
+
+def make_zip(local_path, pname):
+    """ 打包zip """
+    zipf = zipfile.ZipFile(pname, 'w', zipfile.ZIP_DEFLATED)
+    pre_len = len(os.path.dirname(local_path))
+    for parent, dirnames, filenames in os.walk(local_path):
+        for filename in filenames:
+            pathfile = os.path.join(parent,  filename)
+            arcname = pathfile[pre_len:].strip(os.path.sep)
+            zipf.write(pathfile,  arcname)
+    zipf.close()
+    return pname
+
+
+if __name__ == '__main__':
+    config = read_config_ini(BasePath.CONFIG_FILE)
+    print(config['ui自动化配置']['confidence'])

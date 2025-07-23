@@ -6,6 +6,13 @@
 # -封装（键盘）输入长文本、单个按键操作、组合按键操作
 """
 
+import sys
+from pathlib import Path
+# 获取当前文件的父目录的父目录（项目根目录）
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+# print(sys.path)
+
 import time
 import pyautogui
 import pyperclip   # 用于复制粘贴

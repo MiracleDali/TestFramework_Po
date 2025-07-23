@@ -3,6 +3,12 @@
 # 元素或接口数据自动读取
 """
 
+import sys
+from pathlib import Path
+# 获取当前文件的父目录的父目录（项目根目录）
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+
 import os
 from string import Template
 import yaml
@@ -86,7 +92,7 @@ class DataDriver:
 
 
 if __name__ == '__main__':
-    res = init_file_path(r'E:\TestFramework_Po\Data\DataElement\project01_auto_test')
+    res = init_file_path(r'D:\2_python_file\TestFramework_Po\Data\DataElement\project01_auto_test')
     res1 = is_file_exist(res, 'Web元素信息')
     print(res1)
 

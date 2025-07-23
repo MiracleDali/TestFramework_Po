@@ -4,6 +4,13 @@
 # 实现双通道输出，console_output、file_save。 支持多实例复用
 """
 
+import sys
+from pathlib import Path
+# 获取当前文件的父目录的父目录（项目根目录）
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+# print(sys.path)
+
 import logging
 import time
 import os

@@ -3,6 +3,7 @@ home_api: # home接口
   url: /web/guest/home
   headers:
     "User-Agent": "Mozilla/6.6 (Windows NT 66.6; WOW64; Trident/6.6; rv:66.6) like Gecko"
+  verify: False
 
 Login_api: # 登录接口
   method: post

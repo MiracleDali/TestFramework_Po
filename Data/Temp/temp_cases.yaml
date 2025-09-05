@@ -1,0 +1,8 @@
+TestSuits/project02/test_case01.py::TestCase:
+  comment: ' 测试用例类 '
+  test_case01rrr: ' 测试用例01 '
+  test_case02rrr: ' 测试用例02'
+TestSuits/project02/test_case01.py::TestCase2:
+  comment: ' 测试用例类 '
+  test_case01rrr: ' 测试用例01 '
+  test_case02rrr: ' 测试用例02'

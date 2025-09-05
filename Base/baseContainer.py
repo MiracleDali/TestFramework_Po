@@ -5,6 +5,7 @@
 """
 
 class GlobalManager(object):
+    """ 单例模式全局变量管理器 """
     _globaldict = {}
     _instance = False
 

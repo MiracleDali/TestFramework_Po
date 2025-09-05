@@ -1,0 +1,5 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+" 测试用例01 ","1","test_case01rrr","TestSuits.project02","Fri Sep 05 18:37:10 CST 2025","passed","Fri Sep 05 18:37:10 CST 2025","TestCase","test_case01","",""
+" 测试用例02","0","test_case02rrr","TestSuits.project02","Fri Sep 05 18:37:10 CST 2025","passed","Fri Sep 05 18:37:10 CST 2025","TestCase","test_case01","",""
+" 测试用例02","0","test_case02rrr","TestSuits.project02","Fri Sep 05 18:37:10 CST 2025","passed","Fri Sep 05 18:37:10 CST 2025","TestCase2","test_case01","",""
+" 测试用例01 ","0","test_case01rrr","TestSuits.project02","Fri Sep 05 18:37:10 CST 2025","passed","Fri Sep 05 18:37:10 CST 2025","TestCase2","test_case01","",""

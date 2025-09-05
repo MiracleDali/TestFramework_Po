@@ -21,6 +21,11 @@ class BasePath:
 
     DATA_TEMP_DIR = os.path.join(DATA_DIR, 'Temp')
     SCREENSHOT_DIR = os.path.join(DATA_TEMP_DIR, 'Screenshots')
+    SCREENSHOT_PIC = os.path.join(SCREENSHOT_DIR, 'errar_pic.png')
+
+    # pyside6 用例管理路径
+    TEST_CASES = os.path.join(DATA_TEMP_DIR, 'test_cases.yaml')
+    TEMP_CASES = os.path.join(DATA_TEMP_DIR, 'temp_cases.yaml')
 
     #  Driver文件路径
     DRIVER_DIR = os.path.join(PROJECT_ROOT, 'Driver')
@@ -32,9 +37,11 @@ class BasePath:
     ALLURE_DIR = os.path.join(PROJECT_ROOT, 'Report', 'ALLURE')
     ALLURE_REPORT = os.path.join(ALLURE_DIR, 'Report')
     ALLURE_RESULT = os.path.join(PROJECT_ROOT, 'Result')
-
     HTML_DIR = os.path.join(PROJECT_ROOT, 'Report', 'HTML')
     XML_DIR = os.path.join(PROJECT_ROOT, 'Report', 'XML')
+
+    # 用例路径
+    TEST_SUITE_DIR = os.path.join(PROJECT_ROOT, 'TestSuits')
 
 
 

@@ -36,6 +36,12 @@ def make_zip(local_path, pname):
     return pname
 
 
+def file_all_dele(path):
+    """ 删除文件及文件夹下所有文件  """
+    for filename in os.listdir(path):
+        os.unlink(os.path.join(path, filename))
+
+
 if __name__ == '__main__':
     config = read_config_ini(BasePath.CONFIG_FILE)
-    print(config['ui自动化配置']['confidence'])
+    print(config['客户端自动化配置']['confidence'])

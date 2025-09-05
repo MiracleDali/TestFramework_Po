@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class ExcelRead:
-    def __init__(self, excel_path: str , sheet_name: str = "Sheet1"):
+    def __init__(self, excel_path: str, sheet_name: str = "Sheet1"):
         self.table = pd.read_excel(excel_path, sheet_name)
         # 获取第一行为key值
         self.keys = self.table.columns.tolist()
@@ -88,7 +88,7 @@ class ExcelWrite:
 
 
 if __name__ == "__main__":
-    file_path = r'E:\TestFramework_Po\Data\DataDriver\ExcelDriver\project01_auto_test\1.xlsx'
+    file_path = r'D:\2_python_file\TestFramework_Po\Data\DataDriver\ExcelDriver\project01_auto_test\ExcelWrite.xlsx'
 
     # 创建字典列表 可以使用下面两种方法进行创建
     d_01 = [

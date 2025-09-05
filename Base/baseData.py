@@ -22,10 +22,14 @@ from Base.baseExcel import ExcelRead
 logger = Logger('Base/baseData.py').getLogger()
 
 def init_file_path(folder_path):
-    """遍历文件夹下所有文件路径"""
+    """ 
+    遍历文件夹下所有文件路径
+    return: {'filename1': '/data/filename1.yaml',  'filename2': '/docs/filename2.txt'}
+    """
     path = {}
     for dirpath, _, filenames in os.walk(folder_path):
         for filename in filenames:
+            # 过滤文件名操作
             # if filename.endswith('.yaml') or filename.endswith('.yml') or filename.endswith('.xlsx'):
             # 获取不带扩展名的文件名
             name = os.path.splitext(filename)[0]
@@ -35,7 +39,10 @@ def init_file_path(folder_path):
 
 
 def is_file_exist(file_path, yaml_name):
-    """ 检查文件是否存在 """
+    """ 
+    检查文件是否存在 
+    return: 文件的绝对路径
+    """
     abs_path = file_path.get(yaml_name)
     if not abs_path:
         raise FileNotFoundError(f"文件不存在，请检查文件路径是否正确 & 请确认测试 type 是否正确（HTTP、WEB、CLIENT）: {yaml_name}")
@@ -72,7 +79,7 @@ class DataBase:
 
 
 class DataDriver:
-    """ 读取数据 """
+    """ 读取用例数据 """
     def __init__(self):
         self.gm = GlobalManager()
         self.config = read_config_ini(BP.CONFIG_FILE)

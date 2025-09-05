@@ -19,7 +19,7 @@ def read_yaml(yaml_path):
         with open(yaml_path, 'r', encoding='utf-8') as f:
             cfg = f.read()
     except UnicodeDecodeError as e:
-        raise ValueError("文件编码异常，请确认是否为合法的UTF-8文件") from e
+        raise ValueError("文件编码异常, 请确认是否为合法的UTF-8文件") from e
 
     content = yaml.load(cfg, Loader=yaml.FullLoader)
     return content
@@ -51,4 +51,4 @@ def write_yaml(yaml_path, data):
 
 
 if __name__ == '__main__':
-    print(read_yaml(r'E:\TestFramework_Po\Data\DataDriver\YamlDriver\project01_auto_test\yamldata.yaml'))
+    print(read_yaml(r'D:\2_python_file\TestFramework_Po\Data\DataDriver\YamlDriver\project01_auto_test\yamldata.yaml'))

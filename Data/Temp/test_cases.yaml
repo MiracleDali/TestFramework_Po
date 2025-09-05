@@ -1,6 +1,3 @@
-TestSuits/project02/test_case01.py::TestCase:
-- test_case01rrr
-- test_case02rrr
-TestSuits/project02/test_case01.py::TestCase2:
-- test_case01rrr
-- test_case02rrr
+TestSuits/p01_client_xsglxt/test_client_xsglxt.py::TestClientCase1:
+- test_login_case01[case_data0]
+- test_login_case01[case_data1]

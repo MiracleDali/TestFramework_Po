@@ -1,8 +1,4 @@
-TestSuits/project02/test_case01.py::TestCase:
-  comment: ' 测试用例类 '
-  test_case01rrr: ' 测试用例01 '
-  test_case02rrr: ' 测试用例02'
-TestSuits/project02/test_case01.py::TestCase2:
-  comment: ' 测试用例类 '
-  test_case01rrr: ' 测试用例01 '
-  test_case02rrr: ' 测试用例02'
+TestSuits/p01_client_xsglxt/test_client_xsglxt.py::TestClientCase1:
+  comment: '客户端自动化-学生管理系统-登录功能模块 '
+  test_login_case01[case_data0]: '客户端自动化用例-用户登录 '
+  test_login_case01[case_data1]: '客户端自动化用例-用户登录 '

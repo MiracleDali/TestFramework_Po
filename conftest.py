@@ -21,21 +21,30 @@ gm.set_value('CONFIG_INFO', config)
 insert_js_html = False
 
 
-# #  打开不同的浏览器
-# def pytest_addoption(parser):
-#     """添加命令行参数 --selenium_browser 和 --host"""
-#     parser.addoption(
-#         "--selenium_browser",
-#         action="store",
-#         default=config['WEB自动化配置']['selenium_browser'],
-#         help="指定 Selenium 浏览器驱动类型: 'firefox', 'chrome' 或 'edge'"
-#     )
-#     parser.addoption(
-#         "--host",
-#         action="store",
-#         default=config['项目运行设置']['TEST_URL'],
-#         help="指定测试主机地址，例如: http://127.0.0.1"
-#     )
+#  添加参数用于浏览器选择
+def pytest_addoption(parser):
+    """添加命令行参数 --selenium_browser 和 --host"""
+    group = parser.getgroup("selenium")
+    try:
+        group.addoption(
+            "--selenium_browser",
+            action="store",
+            default=config['WEB自动化配置']['selenium_browser'],
+            help="指定 Selenium 浏览器驱动类型: 'firefox', 'chrome' 或 'edge'"
+        )
+        group.addoption(
+            "--host",
+            action="store",
+            default=config['项目运行设置']['TEST_URL'],
+            help="指定测试主机地址，例如: http://127.0.0.1"
+        )
+    except ValueError:
+        # 已经注册过了，忽略
+        pass
+
+# @pytest.fixture(scope="session")
+# def selenium_browser(request):
+#     return request.config.getoption("--selenium_browser")
 
 
 @pytest.fixture(scope='function')

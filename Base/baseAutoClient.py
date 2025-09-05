@@ -93,7 +93,7 @@ class GuiBase(DataBase):
             logger.debug(f"移动到图片{el}位置{is_click}， 点击{pos_x_y}成功")
         logger.debug(f"移动到图片{el}位置成功")
 
-    def rel_click_picture(self, el, rel_x=0, rel_y=0, clicks: int = 1, button='left', is_click=True):
+    def rel_picture_click(self, el, rel_x=0, rel_y=0, clicks: int = 1, button='left', is_click=True):
         """ 相对位置点击 图片点击、悬停, 点击次数, 鼠标左键还是右键点击"""
         pos_x_y = self.is_exist(el)
         if not pos_x_y:

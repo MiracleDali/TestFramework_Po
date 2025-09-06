@@ -14,3 +14,4 @@ class TestClientCase1():
         cp = ClientPage()
         cp.client_login(case_data['username'], case_data['password'])
         cp.assert_login_success(case_data['flag'])
+

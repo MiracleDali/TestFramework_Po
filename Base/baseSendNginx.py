@@ -75,11 +75,11 @@ class SendNginx(object):
 
                 logger.info(f'allure 报告存在准备发送到nginx: {self.local_allure_report}')
                 self.start_send(f'scp '
-                                f'-v '  # （verbose模式）查看详细交互过程
+                                # f'-v '  # （verbose模式）查看详细交互过程
                                 f'-r '
                                 f'-P {self.nginx_port} '
                                 f'-o ConnectTimeout=10 '  # 连接阶段超时（TCP握手）
-                                f'-o PreferredAuthentications=publickey '
+                                f'-o PreferredAuthentications=publickey '  # 认证公钥
                                 f'-o ServerAliveInterval=30 '  # 每30秒发送一次存活包
                                 f'-o ServerAliveCountMax=3 '  # 最大存活检测次数
                                 f'{self.local_allure_report} '
@@ -97,11 +97,11 @@ class SendNginx(object):
             if os.path.isfile(self.local_html_report):
                 logger.info(f'html 报告存在开始发送到nginx: {self.local_html_report}')
                 self.start_send(f'scp '
-                                f'-v '  # （verbose模式）查看详细交互过程
+                                # f'-v '  # （verbose模式）查看详细交互过程
                                 f'-r '
                                 f'-P {self.nginx_port} '
                                 f'-o ConnectTimeout=10 '  # 连接阶段超时（TCP握手）
-                                f'-o PreferredAuthentications=publickey '
+                                f'-o PreferredAuthentications=publickey '  # 认证公钥
                                 f'-o ServerAliveInterval=30 '  # 每30秒发送一次存活包
                                 f'-o ServerAliveCountMax=3 '  # 最大存活检测次数
                                 f'{self.local_html_report} '

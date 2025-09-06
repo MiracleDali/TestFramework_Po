@@ -15,7 +15,7 @@ logger = Logger('PageObject/client_start_stop.py').getLogger()
 class ClientPage(GuiBase):
     def __init__(self):
         super().__init__()
-        self.client_path = r"E:\备份\学浪课程配套\02项目实战\学生管理系统\学生管理系统\客户端程序"
+        self.client_path = r"E:\学浪课程配套_pytest框架\02项目实战\学生管理系统\客户端程序"
         self.exe_path = Path(self.client_path).joinpath("main.exe")
         self.db_path = Path(self.client_path).joinpath("student.db")
         self.sys = SysOperation()

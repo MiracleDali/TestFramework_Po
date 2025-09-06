@@ -1,6 +1,9 @@
 import os
 import sys
 import pathlib
+
+from Base.baseSendNginx import SendNginx
+
 # 获取项目根目录添加到环境变量
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.append(str(PROJECT_ROOT))
@@ -103,4 +106,6 @@ if __name__ == '__main__':
         sys.exit()
     run_app(run)
     run_main()
+
+    SendNginx().send_report()
 

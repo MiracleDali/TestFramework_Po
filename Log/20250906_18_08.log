@@ -1,6 +1,0 @@
-2025-09-06 18:08:09,252 - Base/baseSendNginx.py - 67 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
-2025-09-06 18:08:09,252 - Base/baseSendNginx.py - 48 - INFO - common: scp -r -p 22 -o "ConnectTimeout=10" D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
-2025-09-06 18:08:09,278 - Base/baseSendNginx.py - 55 - ERROR -  发送失败: scp: stat local "22": No such file or directory
-2025-09-06 18:08:28,837 - Base/baseSendNginx.py - 67 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
-2025-09-06 18:08:28,837 - Base/baseSendNginx.py - 48 - INFO - common: scp -r -p "22" -o "ConnectTimeout=10" D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
-2025-09-06 18:08:28,864 - Base/baseSendNginx.py - 55 - ERROR -  发送失败: scp: stat local "22": No such file or directory

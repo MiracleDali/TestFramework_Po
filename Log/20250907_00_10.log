@@ -1,0 +1,5 @@
+2025-09-07 00:10:10,887 - Base/baseSendNginx.py - 64 - INFO - 本次测试不发送报告到nginx
+2025-09-07 00:10:29,324 - Base/baseSendNginx.py - 76 - INFO - allure 报告存在准备发送到nginx: E:\github_manage_project\TestFramework_Po\Report\ALLURE\Report
+2025-09-07 00:10:29,324 - Base/baseSendNginx.py - 48 - INFO - common: scp -r -P 22 -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o ServerAliveInterval=30 -o ServerAliveCountMax=3 E:\github_manage_project\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure\Report_20250907_001029
+2025-09-07 00:10:37,715 - Base/baseSendNginx.py - 57 - INFO - 报告发送成功
+2025-09-07 00:10:47,489 - Base/baseSendNginx.py - 64 - INFO - 本次测试不发送报告到nginx

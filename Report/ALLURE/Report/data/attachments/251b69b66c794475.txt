@@ -8,7 +8,8 @@ DEBUG    Base/baseAutoClient.py:baseAutoClient.py:105 查找图片login_password
 DEBUG    Base/baseAutoClient.py:baseAutoClient.py:144 键盘输入:('123',)
 INFO     PageObject/client_start_stop.py:client_start_stop.py:42 输入密码成功:123
 DEBUG    Base/baseAutoClient.py:baseAutoClient.py:63 login_stuteach_btn图片对象在屏幕上
-DEBUG    Base/baseAutoClient.py:baseAutoClient.py:93 移动到图片login_stuteach_btn位置True， 点击Point(x=968, y=712)成功
+DEBUG    Base/baseAutoClient.py:baseAutoClient.py:93 移动到图片login_stuteach_btn位置True， 点击Point(x=971, y=757)成功
 DEBUG    Base/baseAutoClient.py:baseAutoClient.py:94 移动到图片login_stuteach_btn位置成功
-DEBUG    Base/baseAutoClient.py:baseAutoClient.py:73 loginok_student图片对象不在屏幕上
+DEBUG    Base/baseAutoClient.py:baseAutoClient.py:63 loginok_student图片对象在屏幕上
+INFO     PageObject/client_start_stop.py:client_start_stop.py:51 学生账号登录成功
 INFO     PageObject/client_start_stop.py:client_start_stop.py:31 关闭客户端成功

@@ -1,3 +1,0 @@
-2025-09-06 19:55:00,301 - Base/baseSendNginx.py - 98 - INFO - html 报告存在开始发送到nginx: D:\github_program\TestFramework_Po\Report\HTML\auto_report.html
-2025-09-06 19:55:00,301 - Base/baseSendNginx.py - 48 - INFO - common: scp -v -r -P 22 -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o ServerAliveInterval=30 -o ServerAliveCountMax=3 D:\github_program\TestFramework_Po\Report\HTML\auto_report.html root@113.44.217.121:/usr/share/nginx/html/report/html\auto_report_20250906_195500.html
-2025-09-06 19:55:00,684 - Base/baseSendNginx.py - 57 - INFO - 报告发送成功

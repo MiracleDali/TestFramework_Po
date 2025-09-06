@@ -1,0 +1,2 @@
+2025-09-06 17:54:07,881 - Base/baseSendNginx.py - 67 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 17:54:07,881 - Base/baseSendNginx.py - 48 - INFO - common: scp -r D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure

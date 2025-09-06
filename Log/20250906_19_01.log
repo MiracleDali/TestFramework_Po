@@ -1,0 +1,8 @@
+2025-09-06 19:01:50,539 - Base/baseSendNginx.py - 72 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 19:01:50,540 - Base/baseSendNginx.py - 48 - INFO - common: scp -v -r -P 22 -o ConnectTimeout=10 D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
+2025-09-06 19:02:00,595 - Base/baseSendNginx.py - 55 - ERROR -  发送失败: Executing: program ssh.exe host 113.44.217.121, user root, command sftp
+OpenSSH_for_Windows_9.5p1, LibreSSL 3.8.2
+debug1: Connecting to 113.44.217.121 [113.44.217.121] port 22.
+debug1: connect to address 113.44.217.121 port 22: Connection timed out
+ssh: connect to host 113.44.217.121 port 22: Connection timed out
+scp: Connection closed

@@ -1,0 +1,28 @@
+2025-09-06 13:32:17,255 - PageObject/client_start_stop.py - 26 - INFO - 启动客户端成功
+2025-09-06 13:32:18,798 - Base/baseAutoClient.py - 63 - DEBUG - login_studnum图片对象在屏幕上
+2025-09-06 13:32:20,079 - Base/baseAutoClient.py - 105 - DEBUG - 查找图片login_studnum，位置True，偏移位置(150, 0)，点击True, 成功
+2025-09-06 13:32:20,182 - Base/baseAutoClient.py - 144 - DEBUG - 键盘输入:('201901010103',)
+2025-09-06 13:32:20,182 - PageObject/client_start_stop.py - 38 - INFO - 输入学号成功:201901010103
+2025-09-06 13:32:20,301 - Base/baseAutoClient.py - 63 - DEBUG - login_password图片对象在屏幕上
+2025-09-06 13:32:21,595 - Base/baseAutoClient.py - 105 - DEBUG - 查找图片login_password，位置True，偏移位置(150, 0)，点击True, 成功
+2025-09-06 13:32:21,697 - Base/baseAutoClient.py - 144 - DEBUG - 键盘输入:('123',)
+2025-09-06 13:32:21,697 - PageObject/client_start_stop.py - 42 - INFO - 输入密码成功:123
+2025-09-06 13:32:21,819 - Base/baseAutoClient.py - 63 - DEBUG - login_stuteach_btn图片对象在屏幕上
+2025-09-06 13:32:22,645 - Base/baseAutoClient.py - 93 - DEBUG - 移动到图片login_stuteach_btn位置True， 点击Point(x=968, y=712)成功
+2025-09-06 13:32:22,645 - Base/baseAutoClient.py - 94 - DEBUG - 移动到图片login_stuteach_btn位置成功
+2025-09-06 13:32:28,736 - Base/baseAutoClient.py - 73 - DEBUG - loginok_student图片对象不在屏幕上
+2025-09-06 13:32:29,132 - PageObject/client_start_stop.py - 31 - INFO - 关闭客户端成功
+2025-09-06 13:32:31,142 - PageObject/client_start_stop.py - 26 - INFO - 启动客户端成功
+2025-09-06 13:32:32,698 - Base/baseAutoClient.py - 63 - DEBUG - login_studnum图片对象在屏幕上
+2025-09-06 13:32:33,980 - Base/baseAutoClient.py - 105 - DEBUG - 查找图片login_studnum，位置True，偏移位置(150, 0)，点击True, 成功
+2025-09-06 13:32:34,081 - Base/baseAutoClient.py - 144 - DEBUG - 键盘输入:('123',)
+2025-09-06 13:32:34,081 - PageObject/client_start_stop.py - 38 - INFO - 输入学号成功:123
+2025-09-06 13:32:34,199 - Base/baseAutoClient.py - 63 - DEBUG - login_password图片对象在屏幕上
+2025-09-06 13:32:35,481 - Base/baseAutoClient.py - 105 - DEBUG - 查找图片login_password，位置True，偏移位置(150, 0)，点击True, 成功
+2025-09-06 13:32:35,583 - Base/baseAutoClient.py - 144 - DEBUG - 键盘输入:('123',)
+2025-09-06 13:32:35,583 - PageObject/client_start_stop.py - 42 - INFO - 输入密码成功:123
+2025-09-06 13:32:35,702 - Base/baseAutoClient.py - 63 - DEBUG - login_stuteach_btn图片对象在屏幕上
+2025-09-06 13:32:36,529 - Base/baseAutoClient.py - 93 - DEBUG - 移动到图片login_stuteach_btn位置True， 点击Point(x=968, y=712)成功
+2025-09-06 13:32:36,529 - Base/baseAutoClient.py - 94 - DEBUG - 移动到图片login_stuteach_btn位置成功
+2025-09-06 13:32:41,629 - Base/baseAutoClient.py - 73 - DEBUG - loginok_teacher图片对象不在屏幕上
+2025-09-06 13:32:41,789 - PageObject/client_start_stop.py - 31 - INFO - 关闭客户端成功

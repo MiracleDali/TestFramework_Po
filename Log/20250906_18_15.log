@@ -1,0 +1,9 @@
+2025-09-06 18:15:30,690 - Base/baseSendNginx.py - 67 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 18:15:30,690 - Base/baseSendNginx.py - 48 - INFO - common: scp -r -P 22 -o ConnectTimeout=10 -o LoginGraceTime=10D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
+2025-09-06 18:15:30,716 - Base/baseSendNginx.py - 55 - ERROR -  发送失败: usage: scp [-346ABCOpqRrsTv] [-c cipher] [-D sftp_server_path] [-F ssh_config]
+           [-i identity_file] [-J destination] [-l limit] [-o ssh_option]
+           [-P port] [-S program] [-X sftp_option] source ... target
+2025-09-06 18:15:53,931 - Base/baseSendNginx.py - 67 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 18:15:53,933 - Base/baseSendNginx.py - 48 - INFO - common: scp -r -P 22 -o ConnectTimeout=10 -o LoginGraceTime=10 D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
+2025-09-06 18:15:53,973 - Base/baseSendNginx.py - 55 - ERROR -  发送失败: command-line: line 0: Bad configuration option: logingracetime
+scp: Connection closed

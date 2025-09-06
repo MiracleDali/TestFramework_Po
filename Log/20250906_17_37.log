@@ -1,0 +1,2 @@
+2025-09-06 17:37:22,902 - Base/baseSendNginx.py - 52 - INFO - allure 报告存在开始发送: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 17:37:33,460 - Base/baseSendNginx.py - 52 - INFO - allure 报告存在开始发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report

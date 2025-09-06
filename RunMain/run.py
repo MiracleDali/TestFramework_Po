@@ -9,7 +9,8 @@ import pytest
 from Base.basePath import BasePath as BP
 from Base.utils import read_config_ini, file_all_dele
 from Base.baseContainer import GlobalManager
-from Base.baseSendEmail import HandleEmail 
+from Base.baseSendEmail import HandleEmail
+from Base.baseSendNginx import SendNginx
 
 
 config = read_config_ini(BP.CONFIG_FILE)
@@ -47,8 +48,11 @@ def run_main():
         print(f'{run_config["REPORT_TYPE"]}')
         el.send_public_email(text=text, filetype=run_config['REPORT_TYPE'])
 
+
+
 if __name__ == '__main__':
     run_main()
+    SendNginx().send_report()
     
 
 

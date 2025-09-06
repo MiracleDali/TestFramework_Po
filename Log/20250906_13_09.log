@@ -1,0 +1,8 @@
+2025-09-06 13:09:02,309 - PageObject/client_start_stop.py - 26 - INFO - 启动客户端成功
+2025-09-06 13:09:07,530 - Base/baseAutoClient.py - 73 - DEBUG - login_studnum图片对象不在屏幕上
+2025-09-06 13:09:07,616 - Base/baseAutoClient.py - 81 - ERROR - 方法：rel_click_picture，查找图片login_studnum位置，当前屏幕无此内容，以截屏
+2025-09-06 13:09:08,000 - PageObject/client_start_stop.py - 31 - INFO - 关闭客户端成功
+2025-09-06 13:09:10,012 - PageObject/client_start_stop.py - 26 - INFO - 启动客户端成功
+2025-09-06 13:09:15,220 - Base/baseAutoClient.py - 73 - DEBUG - login_studnum图片对象不在屏幕上
+2025-09-06 13:09:15,324 - Base/baseAutoClient.py - 81 - ERROR - 方法：rel_click_picture，查找图片login_studnum位置，当前屏幕无此内容，以截屏
+2025-09-06 13:09:15,463 - PageObject/client_start_stop.py - 31 - INFO - 关闭客户端成功

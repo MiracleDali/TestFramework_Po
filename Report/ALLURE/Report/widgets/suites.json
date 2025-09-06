@@ -1,1 +1,1 @@
-{"total":1,"items":[{"uid":"bd5bb90a46a21282fc6326f1f5ac4f59","name":"TestSuits.project02","statistic":{"failed":0,"broken":0,"skipped":0,"passed":4,"unknown":0,"total":4}}]}
+{"total":1,"items":[{"uid":"2b4cae33256030f1b3910214a620f920","name":"TestSuits.p01_client_xsglxt","statistic":{"failed":1,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":2}}]}

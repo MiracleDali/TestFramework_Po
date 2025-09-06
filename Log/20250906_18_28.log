@@ -1,0 +1,10 @@
+2025-09-06 18:28:00,677 - Base/baseSendNginx.py - 70 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 18:28:00,678 - Base/baseSendNginx.py - 50 - INFO - common: scp -v -r -P 22 -o ConnectTimeout=10 -o LoginGraceTime=10 D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
+2025-09-06 18:28:00,717 - Base/baseSendNginx.py - 57 - ERROR -  发送失败: Executing: program ssh.exe host 113.44.217.121, user root, command sftp
+command-line: line 0: Bad configuration option: logingracetime
+scp: Connection closed
+2025-09-06 18:28:14,413 - Base/baseSendNginx.py - 70 - INFO - allure 报告存在准备发送到nginx: D:\github_program\TestFramework_Po\Report\ALLURE\Report
+2025-09-06 18:28:14,414 - Base/baseSendNginx.py - 50 - INFO - common: scp -v -r -P 22 -o ConnectTimeout=10 -o LoginGraceTime=10 D:\github_program\TestFramework_Po\Report\ALLURE\Report root@113.44.217.121:/usr/share/nginx/html/report/allure
+2025-09-06 18:28:14,453 - Base/baseSendNginx.py - 57 - ERROR -  发送失败: Executing: program ssh.exe host 113.44.217.121, user root, command sftp
+command-line: line 0: Bad configuration option: logingracetime
+scp: Connection closed

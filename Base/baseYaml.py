@@ -10,7 +10,7 @@ def read_yaml(yaml_path):
     """
     读取yaml文件
     :param yaml_path: yaml文件的真实路径
-    :return:
+    :return: [{}, {}]
     """
     if not os.path.isfile(yaml_path):
         raise FileNotFoundError(f"文件路径不存在，请检查路径是否正确: {yaml_path}")
@@ -51,4 +51,4 @@ def write_yaml(yaml_path, data):
 
 
 if __name__ == '__main__':
-    print(read_yaml(r'D:\2_python_file\TestFramework_Po\Data\DataDriver\YamlDriver\project01_auto_test\yamldata.yaml'))
+    print(read_yaml(r'D:\2_python_file\TestFramework_Po\Data\DataDriver\YamlDriver\p01_client_xsglxt\02学生管理系统注册.yaml'))

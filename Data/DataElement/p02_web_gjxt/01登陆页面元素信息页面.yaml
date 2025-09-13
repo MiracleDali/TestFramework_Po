@@ -1,0 +1,7 @@
+login:
+  username: ["name", "_58_login"]
+  password: ["name", "_58_password"]
+  loginbtn: ["xpath", ".//input[@type='submit' and @value='登录']"]
+  welcome: ["xpath", ".//div[@id='banner']/div/h2/span"]
+  quitebtn: ["xpath", ".//div[@class='lfr-dock-list-container']/ul/li/a"]
+  error1: ["xpath", ".//div[@class='portlet-content-container']/div/form/span"]

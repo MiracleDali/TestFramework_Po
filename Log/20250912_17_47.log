@@ -1,0 +1,9 @@
+2025-09-12 17:47:13.562 - PageObject\p02_web_gjxt\web_login_page.py - 23 - INFO - 稿件系统开始执行登陆
+2025-09-12 17:47:14.005 - Base/baseAutoWeb.py - 86 - DEBUG - 浏览器访问请求地址-->http://192.168.64.129
+2025-09-12 17:47:15.006 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_login
+2025-09-12 17:47:15.018 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_login')
+2025-09-12 17:47:15.047 - Base/baseAutoWeb.py - 104 - INFO - 清空输入框-->login/username,成功
+2025-09-12 17:47:15.048 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_login
+2025-09-12 17:47:15.058 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_login')
+2025-09-12 17:47:15.130 - Base/baseAutoWeb.py - 114 - INFO - 输入内容-->test01,成功
+2025-09-12 17:47:16.133 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_password

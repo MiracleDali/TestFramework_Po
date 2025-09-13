@@ -80,7 +80,7 @@ class WebBase(DataBase):
             raise e
 
     def get_url(self, url):
-        """ 打开连url接&最大化窗口 """
+        """ 打开url连接&最大化窗口 """
         self.driver.get(url)
         self.driver.maximize_window()
         logger.debug(f"浏览器访问请求地址-->{url}")
@@ -347,9 +347,18 @@ class WebBase(DataBase):
 
 
 
-
-
 if __name__ == '__main__':
-    wb = WebBase('Web元素信息')
-    res = wb.get_locator_data(locator="login/username")
-    print(res)
+    from selenium import webdriver
+    option = webdriver.ChromeOptions()
+    # 避免浏览器闪退
+    option.add_experimental_option("detach", True)
+    # 创建浏览器对象 打开浏览器
+    driver = webdriver.Chrome(options=option)  
+    
+    from Base.baseContainer import GlobalManager
+    gm  = GlobalManager()
+    gm.set_value('driver', driver)
+
+
+    wb = WebBase('01登陆页面元素信息页面')
+    wb.get_url('https://www.baidu.com')

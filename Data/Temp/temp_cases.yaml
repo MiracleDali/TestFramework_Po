@@ -1,4 +1,5 @@
-TestSuits/p01_client_xsglxt/test_client_xsglxt.py::TestClientCase1:
-  comment: '客户端自动化-学生管理系统-登录功能模块 '
-  test_login_case01[case_data0]: '客户端自动化用例-用户登录 '
-  test_login_case01[case_data1]: '客户端自动化用例-用户登录 '
+TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase01:
+  comment: ' web自动化, 稿件管理，登陆功能模块 '
+  test_login[case_data0]: ' web自动化, 稿件管理，用户登陆测试 '
+  test_login[case_data1]: ' web自动化, 稿件管理，用户登陆测试 '
+  test_login[case_data2]: ' web自动化, 稿件管理，用户登陆测试 '

@@ -1,0 +1,18 @@
+2025-09-12 17:49:35.762 - PageObject\p02_web_gjxt\web_login_page.py - 23 - INFO - 稿件系统开始执行登陆
+2025-09-12 17:49:36.203 - Base/baseAutoWeb.py - 86 - DEBUG - 浏览器访问请求地址-->http://192.168.64.129
+2025-09-12 17:49:37.207 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_login
+2025-09-12 17:49:37.260 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_login')
+2025-09-12 17:49:37.277 - Base/baseAutoWeb.py - 104 - INFO - 清空输入框-->login/username,成功
+2025-09-12 17:49:37.279 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_login
+2025-09-12 17:49:37.290 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_login')
+2025-09-12 17:49:37.356 - Base/baseAutoWeb.py - 114 - INFO - 输入内容-->test01,成功
+2025-09-12 17:49:38.358 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_password
+2025-09-12 17:49:38.361 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_password')
+2025-09-12 17:49:38.364 - Base/baseAutoWeb.py - 104 - INFO - 清空输入框-->login/password,成功
+2025-09-12 17:49:38.865 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->name, value值-->_58_password
+2025-09-12 17:49:38.868 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('name', '_58_password')
+2025-09-12 17:49:38.882 - Base/baseAutoWeb.py - 114 - INFO - 输入内容-->1111,成功
+2025-09-12 17:49:38.885 - Base/baseAutoWeb.py - 56 - INFO - 正在定位元素，定位方式-->xpath, value值-->.//input[@type='submit' and @value='登录']
+2025-09-12 17:49:38.894 - Base/baseAutoWeb.py - 58 - INFO - 元素定位成功，元素信息-->('xpath', ".//input[@type='submit' and @value='登录']")
+2025-09-12 17:49:39.260 - Base/baseAutoWeb.py - 94 - INFO - 点击元素-->login/loginbtn,成功
+2025-09-12 17:49:39.260 - PageObject\p02_web_gjxt\web_login_page.py - 36 - INFO - 稿件系统登陆成功

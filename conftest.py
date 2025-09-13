@@ -23,14 +23,14 @@ insert_js_html = False
 
 #  添加参数用于浏览器选择
 def pytest_addoption(parser):
-    """添加命令行参数 --selenium_browser 和 --host"""
-    group = parser.getgroup("selenium")
+    """添加命令行参数 --web_browser 和 --host"""
+    group = parser.getgroup("web_browser")
     try:
         group.addoption(
-            "--selenium_browser",
+            "--web_browser",
             action="store",
-            default=config['WEB自动化配置']['selenium_browser'],
-            help="指定 Selenium 浏览器驱动类型: 'firefox', 'chrome' 或 'edge'"
+            default=config['WEB自动化配置']['web_browser'],
+            help="指定浏览器驱动类型: 'firefox', 'chrome' 或 'edge'"
         )
         group.addoption(
             "--host",
@@ -50,7 +50,7 @@ def pytest_addoption(parser):
 @pytest.fixture(scope='function')
 def driver(request):
     try:
-        name = request.config.getoption("--selenium_browser")
+        name = request.config.getoption("--web_browser")
 
         _driver = None
         if name == 'firefox':
@@ -76,9 +76,8 @@ def driver(request):
 
         return _driver
 
-
     except ImportError:
-        pytest.exit("请安装selenium依赖包")
+        pytest.exit("请安装依赖包")
     except Exception as e:
         pytest.exit("启动webdriver错误", e)
 

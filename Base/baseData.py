@@ -62,6 +62,7 @@ class DataBase:
 
         # 判断测试类型 （自动化测试类型：HTTP、WEB、CLIENT）
         if not self.run_config['AUTO_TYPE'] == 'CLIENT':
+            # print(self.api_path, self.yaml_name, 6666666666666666666666)
             self.abs_path = is_file_exist(self.api_path, self.yaml_name)
             print(self.abs_path)
 

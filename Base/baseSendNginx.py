@@ -1,6 +1,5 @@
 """
 # file:     Base/baseSendNginx.py
-# 元素或接口数据自动读取
 """
 
 import sys
@@ -57,6 +56,8 @@ class SendNginx(object):
                 logger.info(f'报告发送成功')
         except Exception as e:
             logger.error(f'启动命令失败: {e}')
+        except FileNotFoundError:
+            logger.error(f'请检查nginx配置文件路径是否正确')
 
 
     def send_report(self):

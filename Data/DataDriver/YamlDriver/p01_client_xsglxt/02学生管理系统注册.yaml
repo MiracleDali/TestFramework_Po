@@ -1,0 +1,9 @@
+- name: '刘亦菲'
+  age: '18'
+  username: '201901010106'
+  password: '123456'
+
+- name: '章若楠'
+  age: '18'
+  username: '201901010107'
+  password: '123456'

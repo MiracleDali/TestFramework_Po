@@ -2,7 +2,6 @@ import os
 import sys
 import pathlib
 
-from Base.baseSendNginx import SendNginx
 
 # 获取项目根目录添加到环境变量
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -18,6 +17,7 @@ from Base.baseGuiRan import run
 from Base.basePath import BasePath as BP
 from Base.utils import read_config_ini, file_all_dele
 from Base.baseYaml import read_yaml
+from Base.baseSendNginx import SendNginx
 
 
 config = read_config_ini(BP.CONFIG_FILE)

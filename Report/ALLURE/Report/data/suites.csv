@@ -1,2 +1,5 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-" web自动化, 稿件管理，用户登陆测试 ","0","test_login[case_data0]","","Fri Sep 12 17:46:52 CST 2025","skipped","Fri Sep 12 17:46:52 CST 2025","","","",""
+"web自动化, 稿件管理，用户登陆测试 ","3110","test_login[case_data1]","TestSuits.p02_web_gjxt","Sat Sep 13 18:42:24 CST 2025","passed","Sat Sep 13 18:42:27 CST 2025","TestCase01","test_web_gjglxt","",""
+" web自动化, 稿件管理，用户登陆测试 ","3219","test_login[case_data0]","","Fri Sep 12 17:47:13 CST 2025","passed","Fri Sep 12 17:47:16 CST 2025","","","",""
+"web自动化, 稿件管理，用户登陆测试 ","3187","test_login[case_data2]","TestSuits.p02_web_gjxt","Sat Sep 13 18:42:31 CST 2025","passed","Sat Sep 13 18:42:34 CST 2025","TestCase01","test_web_gjglxt","",""
+"web自动化, 稿件管理，用户登陆测试 ","3225","test_login[case_data0]","TestSuits.p02_web_gjxt","Sat Sep 13 18:42:16 CST 2025","passed","Sat Sep 13 18:42:20 CST 2025","TestCase01","test_web_gjglxt","",""

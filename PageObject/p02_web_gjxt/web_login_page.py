@@ -37,6 +37,7 @@ class LoginPage(WebBase):
 
     def assert_login_success(self, flag):
         """ 断言登陆成功 """
+        flag = int(flag)
         if flag == 1:
             assert self.get_title() == "测试比对样品 - 稿件管理", "[断言]登陆失败"
             logger.info('[断言]登陆成功')

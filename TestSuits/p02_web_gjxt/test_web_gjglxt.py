@@ -1,10 +1,15 @@
+import sys
+from pathlib import Path
+Base_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(Base_DIR))
+
 
 from Base.baseData import DataDriver
 from PageObject.p02_web_gjxt.web_login_page import LoginPage
 import pytest
 
 
-class TestCase01():
+class TestCase01(object):
     """ web自动化, 稿件管理，登陆功能模块 """
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('01_登陆功能'))

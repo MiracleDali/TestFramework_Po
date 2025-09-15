@@ -1,2 +1,2 @@
-TestSuits/p01_client_xsglxt/test_client_xsglxt.py::TestStudentCase03:
-- test_student_change_password_case02[new_password0]
+TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase01:
+- test_add_article[case_data0]

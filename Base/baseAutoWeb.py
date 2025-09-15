@@ -194,7 +194,7 @@ class WebBase(DataBase):
             result = WebDriverWait(self.driver, timeout, self.t).until(EC.alert_is_present())
             return result
         except Exception as e:
-            return False
+            return False, logger.error('未定位到弹窗', e)
 
     def mouse_move_to(self, locator, change_data=None):
         """ 鼠标悬停 """

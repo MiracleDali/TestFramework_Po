@@ -133,11 +133,7 @@ class Sqlite3Tools():
 
 if __name__ == '__main__':
     db = MysqlHelp()
-    sql = "select " \
-          "package, error_type, error_occurred_times, title, detail, result_url, COUNT(*) as count " \
-          "from test_result_package_error_category " \
-          "GROUP BY package, error_type, error_occurred_times, title, result_url, detail " \
-          "ORDER BY package, error_type;"
+    sql = "select * from account_;"
     res = db.mysql_db_select(sql)
     
 

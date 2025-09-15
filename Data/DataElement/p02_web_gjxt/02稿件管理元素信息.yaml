@@ -1,0 +1,12 @@
+article: # 稿件管理
+  add_article_btn: ['xpath', ".//input[@type='button' and @value='增加稿件']"]
+  title: ['id', '_15_title']
+  add_iframe: ['id', '_15_editor'] # 切换到iframe
+  content: ['id', 'textArea']
+  save: ['xpath', ".//input[@type='submit' and @value='保存并返回']"]
+  select_btn: ['xpath', ".//input[@type='submit' and @value='查询稿件']"]
+  first: ['xpath', ".//div[@class='results-grid']/table/tbody/tr[2]/td[3]/a"]
+  state: ['xpath', ".//div[@class='results-grid']/table/tbody/tr[2]/td[5]/a"]
+  # 下面是删除稿件的定位元素
+  cleck: ["xpath", ".//div[@class='results-grid']/table/tbody/tr[2]/td[1]/input"]
+  delete_btn: ['xpath', ".//input[@type='button' and @value='删除']"] 

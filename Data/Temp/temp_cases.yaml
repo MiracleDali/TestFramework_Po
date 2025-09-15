@@ -1,5 +1,11 @@
 TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase01:
-  comment: 'web自动化, 稿件管理，登陆功能模块 '
-  test_login[case_data0]: 'web自动化, 稿件管理，用户登陆测试 '
-  test_login[case_data1]: 'web自动化, 稿件管理，用户登陆测试 '
-  test_login[case_data2]: 'web自动化, 稿件管理，用户登陆测试 '
+  comment: ' web自动化, 稿件管理，登陆功能模块 '
+  test_login[case_data0]: ' web自动化, 稿件管理，用户登陆测试 '
+  test_login[case_data1]: ' web自动化, 稿件管理，用户登陆测试 '
+  test_login[case_data2]: ' web自动化, 稿件管理，用户登陆测试 '
+TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase02:
+  comment: ' web自动化, 稿件管理，稿件管理模块 '
+  test_add_article[case_data0]: '  web自动化, 稿件管理，添加稿件测试 '
+  test_add_article[case_data1]: '  web自动化, 稿件管理，添加稿件测试 '
+  test_delete_article[case_data0]: ' web自动化, 稿件管理，删除稿件测试 '
+  test_delete_article[case_data1]: ' web自动化, 稿件管理，删除稿件测试 '

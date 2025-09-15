@@ -11,9 +11,11 @@ from Base.utils import *
 from Base.basePath import BasePath as BP
 from Base.baseContainer import GlobalManager
 from Base.baseYaml import write_yaml
+from Base.baseLogger import Logger
 from selenium import webdriver
 from playwright.sync_api  import Page 
 
+logger = Logger('/root.conftest.py').getLogger()
 
 config = read_config_ini(BP.CONFIG_FILE)
 gm = GlobalManager()
@@ -68,9 +70,11 @@ def driver(request):
 
         _driver.implicitly_wait(5)
         print(f'正在打开 【{name}】 浏览器')
+        logger.info(f'正在打开 【{name}】 浏览器')
 
         def fu():
             print('当全部用例执行完成后，关闭浏览器')
+            logger.info(f'正在关闭 【{name}】 浏览器')
             _driver.quit()
         request.addfinalizer(fu)
 

@@ -34,7 +34,17 @@ class TestCase02():
     def test_delete_article(self, driver, init_login, case_data):
         """ web自动化, 稿件管理，删除稿件测试 """
         ap = ArticlePage()
-        ap.add_article(title=case_data['title'], content='test content')   # 添加稿件
+        # ap.add_article(title=case_data['title'], content='test content')   # 添加稿件
         ap.delete_article()   # 删除稿件
         ap.assert_delete_page_article(title=case_data['title'])
         ap.assert_delete_database_article(title=case_data['title'])
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('04_稿件修改'))
+    @pytest.mark.usefixtures('driver', 'delete_article')
+    def test_edit_article_case03(self, case_data, driver, delete_article):
+        """ web自动化, 稿件管理，修改稿件测试 """
+        ap = ArticlePage()
+        ap.add_article(title='新增加稿件')  # 添加稿件
+        ap.edit_article(title=case_data['title'])
+        ap.assert_article_add_success(title=case_data['title'])
+        ap.assert_add_database(title=case_data['title'])

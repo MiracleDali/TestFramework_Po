@@ -1,2 +1,2 @@
 TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase01:
-- test_add_article[case_data0]
+- test_login[case_data0]

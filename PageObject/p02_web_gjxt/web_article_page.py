@@ -18,7 +18,7 @@ class ArticlePage(WebBase):
     def __init__(self):
         super().__init__('02稿件管理元素信息')
 
-    def add_article(self, title, content):
+    def add_article(self, title):
         """ 添加稿件 """
         logger.info('添加稿件开始')
         self.click('article/add_article_btn')
@@ -60,13 +60,18 @@ class ArticlePage(WebBase):
     def delete_article(self):
         """ 删除稿件 """
         logger.info('删除稿件开始')
+        # 查询稿件
+        self.click('article/select_btn')
+        time.sleep(1)
         # 勾选
         self.click('article/cleck')
         time.sleep(1)
         # 删除
         self.click('article/delete_btn')
         # 弹窗确定
+        time.sleep(1)
         self.is_alert().accept()
+        time.sleep(2)
 
     def assert_delete_page_article(self, title):
         """ 断言 页面删除稿件成功 """
@@ -83,30 +88,46 @@ class ArticlePage(WebBase):
         assert int(res[0]['count(*)']) == 0, '[断言] 删除稿件-数据库断言失败！'
         logger.info('[断言] 删除稿件-数据库断言成功-结束')
 
+    def edit_article(self, title):
+        """ 修改稿件 """
+        logger.info('修改稿件开始')
+        self.click('article/first_article')
+        time.sleep(1)
+        self.clear('article/title')
+        self.send_keys('article/title', text=title)
+        # 切换到iframe
+        self.switch_iframe('article/add_iframe')
+        # self.clear('article/content')
+        # self.send_keys('article/content', '这是修改后的内容')
+        self.switch_iframe_out()
+        self.click('article/save')
+        logger.info('修改稿件结束')
     
 
 
 if __name__ == '__main__':
 
-    # from selenium import webdriver
-    # # 避免浏览器闪退
-    # option = webdriver.ChromeOptions()
-    # option.add_experimental_option("detach", True)
-    # # 创建浏览器对象 打开浏览器
-    # driver = webdriver.Chrome(options=option)
-    #
-    # from Base.baseContainer import GlobalManager
-    # gm  = GlobalManager()
-    # gm.set_value('driver', driver)
-    #
-    # from PageObject.p02_web_gjxt.web_login_page import LoginPage
-    # login_page = LoginPage()
-    # login_page.login('test01', '1111')
-    #
+    from selenium import webdriver
+    # 避免浏览器闪退
+    option = webdriver.ChromeOptions()
+    option.add_experimental_option("detach", True)
+    # 创建浏览器对象 打开浏览器
+    driver = webdriver.Chrome(options=option)
+
+    from Base.baseContainer import GlobalManager
+    gm  = GlobalManager()
+    gm.set_value('driver', driver)
+
+    from PageObject.p02_web_gjxt.web_login_page import LoginPage
+    login_page = LoginPage()
+    login_page.login('test01', '1111')
+
     article = ArticlePage()
-    # article.add_article('这是测试标题', '这是测试内容')
+    article.add_article('这是测试标题', '这是测试内容')
     # article.assert_article_add_success('这是测试标题')
     # article.assert_add_database('这是测试标题')
     # article.delete_article()
     # article.assert_delete_page_article('这是测试标题')
-    article.assert_delete_database_article('这是稿8件1')
+    # article.assert_delete_database_article('这是稿8件1')
+
+    article.edit_article('这是修改后的标题')

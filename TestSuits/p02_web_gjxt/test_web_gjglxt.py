@@ -26,17 +26,17 @@ class TestCase02():
         ap = ArticlePage()
         ap.add_article(title=case_data['title'], content=case_data['content'])
         ap.assert_article_add_success(title=case_data['title'])
-        # ap.assert_add_database(title=case_data['title'])
+        ap.assert_add_database(title=case_data['title'])
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('03稿件删除'))  
     @pytest.mark.usefixtures('driver', 'init_login')
     def test_delete_article(self, driver, init_login, case_data):
         """ web自动化, 稿件管理，删除稿件测试 """
         ap = ArticlePage()
-        # ap.add_article(title=case_data['title'], content='test content')   # 添加稿件
+        ap.add_article(title=case_data['title'], content='test content')   # 添加稿件
         ap.delete_article()   # 删除稿件
         ap.assert_delete_page_article(title=case_data['title'])
-        # ap.assert_delete_database_article(title=case_data['title'])
+        ap.assert_delete_database_article(title=case_data['title'])
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('04_稿件修改'))
     @pytest.mark.usefixtures('driver', 'init_login', 'delete_article')
@@ -46,7 +46,7 @@ class TestCase02():
         ap.add_article(title='新增加稿件', content='test content')  # 添加稿件
         ap.edit_article(title=case_data['title'])
         ap.assert_article_add_success(title=case_data['title'])
-        # ap.assert_add_database(title=case_data['title'])
+        ap.assert_add_database(title=case_data['title'])
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('05_稿件查询'))
     @pytest.mark.usefixtures('driver', 'init_login', 'delete_article')
@@ -56,7 +56,7 @@ class TestCase02():
         ap.add_article(title=case_data['title'], content='test content')  # 添加稿件
         ap.search_article(title=case_data['title'])  # 查询稿件
         ap.assert_search_article(title=case_data['title'])  # 断言web查询结果
-        # ap.assert_search_article_database(title=case_data['title'])   # 断言数据库查询结果
+        ap.assert_search_article_database(title=case_data['title'])   # 断言数据库查询结果
 
 
 class TestCase03():

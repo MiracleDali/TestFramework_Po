@@ -95,8 +95,8 @@ class DataDriver:
             return read_yaml(data_path)
         elif data_type == 'ExcelDriver':
             return ExcelRead(data_path).dict_date()
-
-
+        else:
+            raise Exception('请检查配置文件，DATA_DRIVER_TYPE 是否正确')
 
 
 if __name__ == '__main__':

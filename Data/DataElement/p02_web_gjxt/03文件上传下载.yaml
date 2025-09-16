@@ -1,0 +1,9 @@
+file: # 文档上传下载，功能模块
+  file_page: ['xpath', ".//span[text()='文档上传下载']"]
+  new_folder_btn: ["xpath", ".//input[@type='button' and @value='新建文件夹']"]
+  folder_name: ['id', '_20_name']
+  folder_desc: ['id', '_20_description']
+  save_folder: ['xpath', ".//input[@type='submit' and @value='保存并返回']"]
+  first_naem: ['xpath', ".//form/ul[2][@class='lfr-component']/li[2]/a"]
+  first_delete_btn: ['xpath', ".//form/ul[2][@class='lfr-component']/li[2]/nobr/a[2]"]  
+  delete_masige_success: ['xpath', ".//div[@class='portlet-content']/div/div/div"]

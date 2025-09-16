@@ -5,6 +5,7 @@
 import base64
 import pytest
 import pytest_html
+import allure
 from datetime import datetime
 from io import BytesIO
 from Base.utils import *
@@ -13,17 +14,20 @@ from Base.baseContainer import GlobalManager
 from Base.baseYaml import write_yaml
 from Base.baseLogger import Logger
 from selenium import webdriver
-from playwright.sync_api  import Page 
+from playwright.sync_api import sync_playwright
 
-logger = Logger('/root.conftest.py').getLogger()
+logger = Logger('conftest.py').getLogger()
 
 config = read_config_ini(BP.CONFIG_FILE)
 gm = GlobalManager()
 gm.set_value('CONFIG_INFO', config)
-insert_js_html = False
 
 
-#  添加参数用于浏览器选择
+
+
+####################################################################################################
+############  添加参数用于浏览器选择
+
 def pytest_addoption(parser):
     """添加命令行参数 --web_browser 和 --host"""
     group = parser.getgroup("web_browser")
@@ -44,11 +48,64 @@ def pytest_addoption(parser):
         # 已经注册过了，忽略
         pass
 
-# @pytest.fixture(scope="session")
-# def selenium_browser(request):
-#     return request.config.getoption("--selenium_browser")
 
+############  playwright 启动浏览器
 
+@pytest.fixture(scope='session')
+def playwright_instance():
+    """会话级别的 Playwright 实例"""
+    playwright = sync_playwright().start()
+    yield playwright
+    playwright.stop()
+
+@pytest.fixture(scope='function')
+def page(request, playwright_instance):
+    """函数级别的 Page 对象"""
+    browser_type = request.config.getoption("--web_browser")
+    headless = config['WEB自动化配置']['pw_headless']
+    
+    # 选择浏览器类型
+    if browser_type == 'firefox':
+        browser = playwright_instance.firefox.launch(headless=headless)
+    elif browser_type == 'Edge':
+        browser = playwright_instance.chromium.launch(headless=headless)
+    elif browser_type == 'chrome':
+        browser = playwright_instance.chromium.launch(headless=headless)
+    elif browser_type == 'webkit':
+        browser = playwright_instance.webkit.launch(headless=headless)
+    else:
+        browser = None
+        pytest.fail(f"不支持的浏览器类型: {browser_type}")
+    
+
+    context = browser.new_context()
+    context.tracing.start(snapshots=True, sources=True, screenshots=True)
+    
+    page = context.new_page()
+    page.set_default_timeout(5000)
+
+    # 将 Page 对象存储在全局管理器中
+    GlobalManager().set_value('page', page)
+    
+    # 存储浏览器和上下文对象以便清理
+    request.cls.browser = browser
+    request.cls.context = context
+    
+    # 获取测试函数名称用于命名 trace 文件
+    test_name = request.node.name
+    trace_path = f"traces/trace_{test_name}.zip"
+    
+    yield page
+    
+    # 测试结束后清理资源
+    print(f'正在关闭 【{browser_type}】 浏览器')
+    logger.info(f'正在关闭 【{browser_type}】 浏览器')
+
+    page.close()
+    context.tracing.stop(path=trace_path)
+    browser.close()
+
+############  selenium 启动浏览器
 @pytest.fixture(scope='function')
 def driver(request):
     try:
@@ -116,13 +173,12 @@ def pytest_metadata(metadata):
 ####################################################################################################
 ############  失败截图
 
+insert_js_html = False
+
 def _capture_screenshot_sel(): 
     """
     selenium 截图
-    Args: 
-        driver: selenium driver
     Returns: base64编码的PNG图片字符串 
-    # SCREENSHOT_PIC
     """
     # 下面这段是seleuinm 的截图方法
     driver = GlobalManager().get_value('driver')
@@ -130,7 +186,20 @@ def _capture_screenshot_sel():
         pytest.exit("driver 获取为空")
     driver.get_screenshot_as_file(BP.SCREENSHOT_PIC)
     return driver.get_screenshot_as_base64()
-    
+
+def _capture_screenshot_pw():
+    """
+    Playwright 网页截图方法 
+    返回 base64 编码的截图数据 
+    """
+    try:
+        page = GlobalManager().get_value('page')  # 需自行实现获取当前 page 的方法 
+        # 进行全页面截图并返回 base64 
+        screenshot_bytes = page.screenshot(full_page=True,  type="png")
+        return base64.b64encode(screenshot_bytes).decode('utf-8')
+    except Exception as e:
+        logger.error(f"Playwright  截图失败: {str(e)}")
+        return None
 
 def _capture_screenshot_pil():
     """客户端 截图"""
@@ -146,7 +215,6 @@ def _capture_screenshot_pil():
     except ImportError:
         pytest.exit('请安装PIL模块')
 
-
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """ 测试用例执行失败, 截图到报告 """
@@ -158,14 +226,20 @@ def pytest_runtest_makereport(item):
     # 判断当前用例的执行状态
     if report.when == 'call' or report.when == 'setup':
         xfail = hasattr(report, 'wasxfail')
-        # 判断自动化测试类型
+
+        # 判断自动化测试类型进行截图
         if config['项目运行设置']['AUTO_TYPE'] == 'WEB':
-            screen_ing = _capture_screenshot_sel()  # web 截图方法
+            if config['WEB自动化配置']['web_framework'] == 'selenium':  
+                screen_ing = _capture_screenshot_sel()  
+            elif config['WEB自动化配置']['web_framework'] == 'playwright':  
+                screen_ing = _capture_screenshot_pw()  
+                    
         elif config['项目运行设置']['AUTO_TYPE'] == 'CLIENT':
             screen_ing = _capture_screenshot_pil()  # PIL 截图方法
         else:
-            sereen_img = None
-
+            screen_ing = None
+        
+        # 判断用例结果状态 添加截图
         if (report.skipped and xfail) or (report.failed and not xfail) and screen_ing:
             file_name = report.nodeid.replace("::", "_") + ".png"
 
@@ -186,13 +260,11 @@ def pytest_runtest_makereport(item):
                     extra.append(pytest_html.extras.html(script))
             
             elif config['项目运行设置']['REPORT_TYPE'] == 'ALLURE':
-                import allure
                 with allure.step('添加失败用例截图...'):
                     allure.attach.file(BP.SCREENSHOT_PIC, '失败用例截图', allure.attachment_type.PNG)
 
     report.extra = extra
     report.description = str(item.function.__doc__)
-
 
 
 

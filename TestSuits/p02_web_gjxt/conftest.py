@@ -12,8 +12,6 @@ def init_login():
 @pytest.fixture(scope='function')
 def delete_article():
     """ 删除稿件 """
-    lp = LoginPage()
-    lp.login(username='test01', password='1111')
     yield
     ap = ArticlePage()
     ap.delete_article()

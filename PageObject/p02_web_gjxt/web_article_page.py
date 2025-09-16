@@ -18,7 +18,7 @@ class ArticlePage(WebBase):
     def __init__(self):
         super().__init__('02稿件管理元素信息')
 
-    def add_article(self, title):
+    def add_article(self, title, content):
         """ 添加稿件 """
         logger.info('添加稿件开始')
         self.click('article/add_article_btn')
@@ -102,6 +102,34 @@ class ArticlePage(WebBase):
         self.switch_iframe_out()
         self.click('article/save')
         logger.info('修改稿件结束')
+
+
+    def search_article(self, title):
+        """ 搜索稿件 """
+        logger.info('搜索稿件开始')
+        self.clear('article/search_input')  # 清空输入框
+        self.send_keys('article/search_input', title)
+        self.click('article/select_btn')
+        time.sleep(1)
+        logger.info('搜索稿件结束')
+
+    def assert_search_article(self, title):
+        """ 断言 搜索稿件 """
+        logger.info('断言 搜索稿件，开始')
+        assert self.get_text('article/first') == title, '[断言] 搜索稿件失败！'
+        logger.info('[断言] 搜索稿件成功-结束')
+
+    def assert_search_article_database(self, title):
+        """ 搜索稿件-数据库断言 """
+        logger.info('断言 搜索稿件-数据库断言，开始')
+        db = MysqlHelp()
+        sql = f"select title from journalarticle where title = '{title}';"
+        res = db.mysql_db_select(sql)
+        assert res[0]['title'] == title, '[断言] 搜索稿件-数据库断言失败！'
+        logger.info('[断言] 搜索稿件-数据库断言成功-结束')
+
+
+    
     
 
 
@@ -130,4 +158,8 @@ if __name__ == '__main__':
     # article.assert_delete_page_article('这是测试标题')
     # article.assert_delete_database_article('这是稿8件1')
 
-    article.edit_article('这是修改后的标题')
+    # article.edit_article('这是修改后的标题')
+
+    # 查询稿件
+    article.search_article('这是测试标题')
+    # article.assert_search_article('这是测试标题')

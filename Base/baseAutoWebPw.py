@@ -55,6 +55,4 @@ class BaesWebPw(DataBase):
         self.context: Optional[BrowserContext] = None  # 浏览器上下文（用于隔离数据）
         self.page: Optional[Page] = None  # 当前操作的 Page 对象
         self.managed = manage_playwright  # 标记是否由本类管理 Playwright 生命周期
-        self._browser_type = browser_type  # 保存浏览器类型以便后续使用
-        self.default_timeout = default_timeout  # 保存默认超时时间（毫秒）
 

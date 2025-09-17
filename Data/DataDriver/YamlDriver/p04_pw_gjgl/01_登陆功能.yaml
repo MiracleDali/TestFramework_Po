@@ -1,0 +1,12 @@
+# 正确用户名密码
+- username: "test01" 
+  password: "1111"
+  flag: "success"
+# error: "用户名错误"
+- username: "test0222"
+  password: "1111"
+  flag: "fail"
+# # error: "密码错误"
+# - username: "test01"
+#   password: "2222"
+#   flag: "fail"

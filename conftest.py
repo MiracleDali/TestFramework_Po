@@ -24,7 +24,6 @@ gm.set_value('CONFIG_INFO', config)
 
 
 
-
 ####################################################################################################
 ############  添加参数用于浏览器选择
 
@@ -62,7 +61,7 @@ def playwright_instance():
 def page(request, playwright_instance):
     """函数级别的 Page 对象"""
     browser_type = request.config.getoption("--web_browser")
-    headless = config['WEB自动化配置']['pw_headless']
+    headless = config['WEB自动化配置'].getboolean('pw_headless')
     
     # 选择浏览器类型
     if browser_type == 'firefox':
@@ -77,12 +76,9 @@ def page(request, playwright_instance):
         browser = None
         pytest.fail(f"不支持的浏览器类型: {browser_type}")
     
-
     context = browser.new_context()
     context.tracing.start(snapshots=True, sources=True, screenshots=True)
-    
     page = context.new_page()
-    page.set_default_timeout(5000)
 
     # 将 Page 对象存储在全局管理器中
     GlobalManager().set_value('page', page)
@@ -93,7 +89,7 @@ def page(request, playwright_instance):
     
     # 获取测试函数名称用于命名 trace 文件
     test_name = request.node.name
-    trace_path = f"traces/trace_{test_name}.zip"
+    trace_path = f"Traces/trace_{test_name}.zip"
     
     yield page
     
@@ -122,7 +118,7 @@ def driver(request):
             options = webdriver.ChromeOptions()
             options.add_argument('headless')
             _driver = webdriver.Chrome(options=options)
-
+        
         GlobalManager().set_value('driver', _driver)
 
         _driver.implicitly_wait(5)

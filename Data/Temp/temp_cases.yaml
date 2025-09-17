@@ -1,19 +1,4 @@
-TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase01:
-  comment: ' web自动化, 稿件管理，登陆功能模块 '
-  test_login[case_data0]: ' web自动化, 稿件管理，用户登陆测试 '
-  test_login[case_data1]: ' web自动化, 稿件管理，用户登陆测试 '
-  test_login[case_data2]: ' web自动化, 稿件管理，用户登陆测试 '
-TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase02:
-  comment: ' web自动化, 稿件管理，稿件管理模块 '
-  test_add_article[case_data0]: '  web自动化, 稿件管理，添加稿件测试 '
-  test_add_article[case_data1]: '  web自动化, 稿件管理，添加稿件测试 '
-  test_delete_article[case_data0]: ' web自动化, 稿件管理，删除稿件测试 '
-  test_delete_article[case_data1]: ' web自动化, 稿件管理，删除稿件测试 '
-  test_edit_article_case03[case_data0]: ' web自动化, 稿件管理，修改稿件测试 '
-  test_edit_article_case03[case_data1]: ' web自动化, 稿件管理，修改稿件测试 '
-  test_search_article_case04[case_data0]: ' web自动化, 稿件管理，查询稿件测试 '
-  test_search_article_case04[case_data1]: ' web自动化, 稿件管理，查询稿件测试 '
-TestSuits/p02_web_gjxt/test_web_gjglxt.py::TestCase03:
-  comment: ' web自动化, 文件上传下载，文件管理模块 '
-  test_add_det_folder_case01[case_data0]: ' web自动化, 文件夹新增删除测试 '
-  test_add_det_folder_case01[case_data1]: ' web自动化, 文件夹新增删除测试 '
+TestSuits/p04_pw_gjgl/test_pw.py::TestCase01:
+  comment: ' playwright自动化, 稿件管理，登陆功能模块 '
+  test_login_gjgl[case_data0]: ' web自动化, 稿件管理，用户登陆测试 '
+  test_login_gjgl[case_data1]: ' web自动化, 稿件管理，用户登陆测试 '

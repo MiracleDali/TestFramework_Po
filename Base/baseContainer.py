@@ -3,6 +3,14 @@
 # 全局变量管理器封装
 # 使用单例模式
 """
+import sys
+from pathlib import Path
+# 获取当前文件的父目录的父目录（项目根目录）
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
+
+from Base.baseLogger import Logger
+logger = Logger('Base/baseContainer.py').getLogger()
 
 class GlobalManager(object):
     """ 单例模式全局变量管理器 """
@@ -21,7 +29,8 @@ class GlobalManager(object):
         try:
             return self._globaldict[name]
         except KeyError:
-            print(f'获取的变量不存在{name}')
+            logger.error(f'获取的变量不存在{name}')
+            # print(f'获取的变量不存在{name}')
             return None
 
 

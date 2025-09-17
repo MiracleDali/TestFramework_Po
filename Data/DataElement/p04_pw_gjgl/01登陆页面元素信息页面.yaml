@@ -1,0 +1,4 @@
+username: "[name='_58_login']"
+password: "[name='_58_password']"
+login_btn: "//input[@type='submit' and @value='登录']"
+文档上传下载按钮: "//div[@id='navigation']/ul/li[2]/a/span"

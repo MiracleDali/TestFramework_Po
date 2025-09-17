@@ -1,4 +1,9 @@
-TestSuits/p04_pw_gjgl/test_pw.py::TestCase01:
-  comment: ' playwright自动化, 稿件管理，登陆功能模块 '
-  test_login_gjgl[case_data0]: ' web自动化, 稿件管理，用户登陆测试 '
-  test_login_gjgl[case_data1]: ' web自动化, 稿件管理，用户登陆测试 '
+TestSuits/p04_pw_gjgl/test_pw_web_gigl.py::TestCase01:
+  comment: 'playwright自动化, 稿件管理，登陆功能模块 '
+  test_login_gjgl[case_data0]: 'web自动化, 稿件管理，用户登陆测试 '
+  test_login_gjgl[case_data1]: 'web自动化, 稿件管理，用户登陆测试 '
+  test_login_gjgl[case_data2]: 'web自动化, 稿件管理，用户登陆测试 '
+TestSuits/p04_pw_gjgl/test_pw_web_gigl.py::TestCase02:
+  comment: 'playwright自动化, 稿件管理，添加稿件功能模块 '
+  test_add_article[case_data0]: 'web自动化, 稿件管理，添加稿件测试 '
+  test_add_article[case_data1]: 'web自动化, 稿件管理，添加稿件测试 '

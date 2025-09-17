@@ -1,5 +1,5 @@
 # file:     Base/baseAutoWebPw.py
-# WEB自动化
+# WEB自动化 (Playwright) — 严格使用 YAML 顶层 key（找不到直接抛错）
 
 import sys
 from pathlib import Path
@@ -24,17 +24,18 @@ logger = Logger('Base/baseAutoWebPw.py').getLogger()
 
 class WebBase(DataBase):
     """Playwright WEB自动化基类"""
-    
+
     def __init__(self, yaml_name: Optional[str] = None):
         """
         初始化Playwright基类
-        yaml_name: YAML配置文件名，如果为None则不加载配置
         """
+        super().__init__(yaml_name)
         self.config = read_config_ini(BP.CONFIG_FILE)
-        if yaml_name:
-            super().__init__(yaml_name)
         self.page: Page = GlobalManager().get_value('page')
-        self.page.set_default_timeout(int(self.config['WEB自动化配置']['pw_timeout'])) 
+        try:
+            self.page.set_default_timeout(int(self.config['WEB自动化配置']['pw_timeout']))
+        except Exception:
+            self.page.set_default_timeout(10000)
         self.default_timeout = 10000  # 超时时间（毫秒）
         # 当前上下文 frame（如果已切换到 iframe，设置为 Frame 对象；否则为 None）
         self._current_frame: Optional[Frame] = None
@@ -43,9 +44,6 @@ class WebBase(DataBase):
     # Frame / IFrame 支持
     # -----------------------
     def get_frame_by_name(self, name: str) -> Optional[Frame]:
-        """
-        通过 frame 的 name 获取 Frame 对象
-        """
         try:
             frame = self.page.frame(name=name)
             logger.info(f"get_frame_by_name: name={name} -> {frame}")
@@ -55,9 +53,6 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_url(self, url_substring: str) -> Optional[Frame]:
-        """
-        通过 frame.url 包含的子串查找 Frame（返回第一个匹配）
-        """
         try:
             for f in self.page.frames:
                 if f.url and url_substring in f.url:
@@ -70,9 +65,6 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_index(self, index: int) -> Optional[Frame]:
-        """
-        通过 index 获取 Frame（注意：index 0 通常是 main frame）
-        """
         try:
             frames = self.page.frames
             frame = frames[index]
@@ -84,14 +76,17 @@ class WebBase(DataBase):
 
     def get_frame_by_selector(self, selector: str, timeout: Optional[int] = None) -> Optional[Frame]:
         """
-        通过选择器找到 &lt;iframe&gt; 或 <frame> 元素并返回该元素对应的 Frame（使用 element_handle.content_frame()）
+        通过选择器找到 <iframe> 或 <frame> 元素并返回该元素对应的 Frame（使用 element_handle.content_frame()）
+        selector 必须是 YAML key（顶层 key）或直接是 selector 字符串 —— 但按当前严格逻辑，应使用 YAML key。
+        找不到 YAML key 时将抛出 KeyError。
         """
         try:
             timeout = timeout or self.default_timeout
-            self.page.wait_for_selector(selector, timeout=timeout)
-            elem: Optional[ElementHandle] = self.page.query_selector(selector)
+            resolved = self._resolve_selector_if_key(selector)
+            self.page.wait_for_selector(resolved, timeout=timeout)
+            elem: Optional[ElementHandle] = self.page.query_selector(resolved)
             if not elem:
-                logger.warning(f"get_frame_by_selector: 未找到元素 {selector}")
+                logger.warning(f"get_frame_by_selector: 未找到元素 {selector} (resolved: {resolved})")
                 return None
             frame = elem.content_frame()
             if frame:
@@ -104,9 +99,6 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_element(self, element: ElementHandle) -> Optional[Frame]:
-        """
-        通过 ElementHandle 获取对应的 Frame（如果该元素是 iframe）
-        """
         try:
             frame = element.content_frame()
             logger.info(f"get_frame_by_element -> {frame}")
@@ -121,6 +113,7 @@ class WebBase(DataBase):
         """
         切换当前上下文到某个 frame（存储到 self._current_frame），返回找到的 Frame。
         优先级: selector -> name -> index -> url_substring
+        selector 应传 YAML key（顶层 key）
         """
         try:
             frame = None
@@ -145,9 +138,6 @@ class WebBase(DataBase):
             raise
 
     def exit_frame(self):
-        """
-        退出当前 frame，上下文回到 page
-        """
         try:
             self._current_frame = None
             logger.info("exit_frame -> 回到主页面上下文")
@@ -159,56 +149,80 @@ class WebBase(DataBase):
     def frame_context(self, *, name: Optional[str] = None, index: Optional[int] = None,
                       url_substring: Optional[str] = None, selector: Optional[str] = None,
                       timeout: Optional[int] = None) -> Iterator[Frame]:
-        """
-        上下文管理器用法：
-            with self.frame_context(selector='iframe#id'):
-                self.click('button.in-iframe')  # 自动在该 iframe 上执行
-        退出时会自动恢复到主页面上下文
-        """
         prev = self._current_frame
         try:
-            frame = self.enter_frame(name=name, index=index, url_substring=url_substring, selector=selector, timeout=timeout)
+            frame = self.enter_frame(name=name, index=index, url_substring=url_substring, selector=selector,
+                                     timeout=timeout)
             yield frame
         finally:
-            # 恢复之前的 frame（可能为 None）
             self._current_frame = prev
             logger.info("frame_context exit -> 恢复之前的 frame 上下文")
 
-    # -----------------------
-    # Locator 改造（支持当前 frame）
-    # -----------------------
+    def get_locator_data(self, locator_key: str, change_data: Optional[dict] = None) -> str:
+        """
+        从 yaml 中读取 locator 数据。locator_key 示例: "username"
+        严格从 YAML 顶层查找 key；找不到则直接抛 KeyError（不再有任何回退/容错）。
+        YAML 示例（顶层）：
+            username: "[name='_58_login']"
+            password: "//input[@type='submit']"
+        返回 selector 字符串，例如 "[name='_58_login']" 或 "//input[@type='submit']"
+        """
+        res = self.get_element_data(change_data)  # 你的 DataBase.get_element_data()
+        if not isinstance(res, dict):
+            raise TypeError("get_element_data 返回值必须是字典类型，且顶层包含 locator key")
+        if locator_key not in res:
+            # 严格要求：必须在顶层找到，否则直接抛错
+            raise KeyError(f"YAML 顶层未找到 locator_key: {locator_key}")
+        selector = res[locator_key]
+        return selector
+
+    def _resolve_selector_if_key(self, selector_or_key: str) -> str:
+        """
+        严格解析：把传入字符串当作 YAML key（顶层）去获取 selector；
+        若不存在则抛出 KeyError（不再回退）。
+        """
+        sel = self.get_locator_data(selector_or_key)
+        return sel
+
+    def _resolve_selector_to_playwright(self, selector: str) -> str:
+        """
+        将 selector 字符串简单规范化以便 Playwright 识别：
+        - 如果以 // 开头则视为 xpath，返回 'xpath=...'
+        - 其它直接返回（Playwright 默认识别 css selector）
+        """
+        s = selector.strip()
+        if s.startswith("//") or s.startswith("(//"):
+            return f'xpath={s}'
+        return s
+
     def locator(self, selector: str, has_text: Optional[str] = None, has: Optional[str] = None) -> Locator:
         """
         获取定位器（会优先在当前 frame 上查找，如果未切换 frame 则在 page 上查找）
-        
-        Args:
-            selector: CSS选择器或XPath表达式
-            has_text: 筛选包含特定文本的元素
-            has: 筛选包含特定子元素的元素选择器
-            
-        Returns:
-            Locator: Playwright定位器对象
+        selector 必须是 YAML 顶层 key（如 "username"）—— 否则会抛 KeyError。
         """
+        resolved = self._resolve_selector_if_key(selector)
+        pw_selector = self._resolve_selector_to_playwright(resolved)
+
         has_locator = None
         if has:
-            # has 参数是一个选择器字符串，转换为 Locator
+            # has 也必须是 YAML key（顶层）
+            has_sel = self._resolve_selector_if_key(has)
+            has_pw = self._resolve_selector_to_playwright(has_sel)
             if self._current_frame:
-                has_locator = self._current_frame.locator(has)
+                has_locator = self._current_frame.locator(has_pw)
             else:
-                has_locator = self.page.locator(has)
+                has_locator = self.page.locator(has_pw)
 
         if self._current_frame:
-            return self._current_frame.locator(selector, has_text=has_text, has=has_locator)
+            return self._current_frame.locator(pw_selector, has_text=has_text, has=has_locator)
         else:
-            return self.page.locator(selector, has_text=has_text, has=has_locator)
+            logger.info(f"locator -> {selector}={pw_selector}")
+            return self.page.locator(pw_selector, has_text=has_text, has=has_locator)
 
     # -----------------------
     # Dialog / 弹窗 处理
     # -----------------------
     def wait_for_dialog(self, timeout: Optional[int] = None) -> Dialog:
-        """
-        等待 dialog 出现并返回 Dialog 对象（阻塞直到弹窗出现或超时）
-        """
         try:
             timeout = timeout or self.default_timeout
             dialog: Dialog = self.page.wait_for_event("dialog", timeout=timeout)
@@ -219,12 +233,8 @@ class WebBase(DataBase):
             raise
 
     def accept_dialog(self, prompt_text: Optional[str] = None, timeout: Optional[int] = None):
-        """
-        等待并接受弹窗（如果是 prompt，可传入 prompt_text）
-        """
         try:
             dialog = self.wait_for_dialog(timeout=timeout)
-            # 对 prompt，传入文本；对 alert/confirm，传入 None
             if prompt_text is not None:
                 dialog.accept(prompt_text)
                 logger.info(f"accept_dialog -> accepted with prompt_text={prompt_text}")
@@ -236,9 +246,6 @@ class WebBase(DataBase):
             raise
 
     def dismiss_dialog(self, timeout: Optional[int] = None):
-        """
-        等待并取消/拒绝弹窗
-        """
         try:
             dialog = self.wait_for_dialog(timeout=timeout)
             dialog.dismiss()
@@ -248,9 +255,6 @@ class WebBase(DataBase):
             raise
 
     def get_last_dialog_message(self, timeout: Optional[int] = None) -> str:
-        """
-        等待弹窗并返回其 message 文本
-        """
         try:
             dialog = self.wait_for_dialog(timeout=timeout)
             msg = dialog.message
@@ -261,10 +265,6 @@ class WebBase(DataBase):
             raise
 
     def on_dialog(self, handler: Callable[[Dialog], None]):
-        """
-        注册 dialog 事件处理函数（持续监听）
-        handler: callable 接收 Dialog 对象
-        """
         try:
             self.page.on("dialog", handler)
             logger.info("on_dialog -> handler registered")
@@ -273,11 +273,7 @@ class WebBase(DataBase):
             raise
 
     def off_dialog(self, handler: Callable[[Dialog], None]):
-        """
-        注销之前注册的 dialog 处理函数（如果支持）
-        """
         try:
-            # Playwright 支持 page.off
             self.page.off("dialog", handler)
             logger.info("off_dialog -> handler unregistered")
         except Exception as e:
@@ -285,15 +281,9 @@ class WebBase(DataBase):
             # 不抛出以保持容错
 
     # -----------------------
-    # 其余方法（你原来的方法，保持向后兼容，但使用了新的 locator）
+    # 其余方法（使用新的 locator() 实现，保持函数名不变）
     # -----------------------
     def goto(self, url: str, wait_until: str = "load", timeout: Optional[int] = None):
-        """
-        导航到指定URL
-        url: 要导航到的URL
-        wait_until: 等待条件，可选值："commit", "domcontentloaded", "load", "networkidle"
-        timeout: 超时时间（毫秒）
-        """
         try:
             self.page.goto(url, wait_until=wait_until, timeout=timeout or self.default_timeout)
             logger.info(f"导航到URL: {url}")
@@ -301,34 +291,31 @@ class WebBase(DataBase):
             logger.exception(f"导航到URL失败: {url} -> {e}")
             raise e
 
-    def get_by_role(self, role: str, **kwargs) -> Locator:
-        """
-        通过ARIA角色获取元素（优先当前 frame）
-        """
+    def get_by_role(self, role, **kwargs) -> Locator:
         if self._current_frame:
             return self._current_frame.get_by_role(role, **kwargs)
         return self.page.get_by_role(role, **kwargs)
-    
+
     def get_by_text(self, text: str, exact: bool = False) -> Locator:
         if self._current_frame:
             return self._current_frame.get_by_text(text, exact=exact)
         return self.page.get_by_text(text, exact=exact)
-    
+
     def get_by_label(self, text: str) -> Locator:
         if self._current_frame:
             return self._current_frame.get_by_label(text)
         return self.page.get_by_label(text)
-        
+
     def get_by_placeholder(self, text: str) -> Locator:
         if self._current_frame:
             return self._current_frame.get_by_placeholder(text)
         return self.page.get_by_placeholder(text)
-        
+
     def get_by_test_id(self, test_id: str) -> Locator:
         if self._current_frame:
             return self._current_frame.get_by_test_id(test_id)
         return self.page.get_by_test_id(test_id)
-        
+
     def click(self, selector: str, **kwargs):
         try:
             self.locator(selector).click(**kwargs)
@@ -336,7 +323,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"点击元素失败: {selector} -> {e}")
             raise e
-        
+
     def dblclick(self, selector: str, **kwargs):
         try:
             self.locator(selector).dblclick(**kwargs)
@@ -344,15 +331,15 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"双击元素失败: {selector} -> {e}")
             raise e
-            
+
     def fill(self, selector: str, value: str, **kwargs):
         try:
             self.locator(selector).fill(value, **kwargs)
-            logger.info(f"填充表单: {selector} -> {value}")
+            logger.info(f"填充表单: {selector} -> 内容:（{value}）")
         except Exception as e:
             logger.error(f"填充表单失败: {selector} -> {e}")
             raise e
-            
+
     def type(self, selector: str, text: str, **kwargs):
         try:
             self.locator(selector).type(text, **kwargs)
@@ -360,7 +347,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"输入文本失败: {selector} -> {e}")
             raise e
-            
+
     def press(self, selector: str, key: str, **kwargs):
         try:
             self.locator(selector).press(key, **kwargs)
@@ -368,7 +355,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"按下按键失败: {selector} -> {e}")
             raise e
-            
+
     def select_option(self, selector: str, value: str, **kwargs):
         try:
             self.locator(selector).select_option(value, **kwargs)
@@ -376,7 +363,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"选择下拉失败: {selector} -> {e}")
             raise e
-            
+
     def check(self, selector: str, **kwargs):
         try:
             self.locator(selector).check(**kwargs)
@@ -384,7 +371,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"勾选元素失败: {selector} -> {e}")
             raise e
-            
+
     def uncheck(self, selector: str, **kwargs):
         try:
             self.locator(selector).uncheck(**kwargs)
@@ -392,7 +379,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"取消勾选元素失败: {selector} -> {e}")
             raise e
-            
+
     def hover(self, selector: str, **kwargs):
         try:
             self.locator(selector).hover(**kwargs)
@@ -400,7 +387,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"鼠标悬停失败: {selector} -> {e}")
             raise e
-            
+
     def focus(self, selector: str, **kwargs):
         try:
             self.locator(selector).focus(**kwargs)
@@ -408,7 +395,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"聚焦元素失败: {selector} -> {e}")
             raise e
-            
+
     def drag_to(self, source_selector: str, target_selector: str, **kwargs):
         try:
             source = self.locator(source_selector)
@@ -418,7 +405,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"拖放元素失败: {source_selector} -> {target_selector} -> {e}")
             raise e
-            
+
     def screenshot(self, selector: Optional[str] = None, **kwargs) -> bytes:
         try:
             if selector:
@@ -431,36 +418,38 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"截图失败 -> {e}")
             raise e
-            
+
     def wait_for_timeout(self, timeout: int):
         self.page.wait_for_timeout(timeout)
         logger.info(f"等待 {timeout} 毫秒")
-        
+
     def wait_for_selector(self, selector: str, **kwargs):
-        # 支持在 frame 中等待
+        # selector 必须是 YAML key（顶层）
+        sel = self._resolve_selector_if_key(selector)
+        pw_sel = self._resolve_selector_to_playwright(sel)
         if self._current_frame:
-            self._current_frame.wait_for_selector(selector, **kwargs)
+            self._current_frame.wait_for_selector(pw_sel, **kwargs)
         else:
-            self.page.wait_for_selector(selector, **kwargs)
+            self.page.wait_for_selector(pw_sel, **kwargs)
         logger.info(f"等待元素出现: {selector}")
-        
+
     def wait_for_url(self, url: str, **kwargs):
         self.page.wait_for_url(url, **kwargs)
         logger.info(f"等待URL: {url}")
-        
+
     def wait_for_load_state(self, state: str = "load", **kwargs):
         self.page.wait_for_load_state(state, **kwargs)
         logger.info(f"等待加载状态: {state}")
-        
+
     def expect(self, selector: str):
         """
         获取断言对象（支持当前 frame）
+        selector 必须是 YAML key（顶层）
         """
         return expect(self.locator(selector))
-        
+
     def evaluate(self, expression: str, arg: Any = None) -> Any:
         try:
-            # evaluate 只能在 page 上运行；若在 frame 上，需要用 frame.evaluate
             if self._current_frame:
                 result = self._current_frame.evaluate(expression, arg)
             else:
@@ -470,7 +459,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"执行JavaScript失败: {expression} -> {e}")
             raise e
-            
+
     def evaluate_handle(self, expression: str, arg: Any = None) -> Any:
         try:
             if self._current_frame:
@@ -482,7 +471,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"执行JavaScript并返回句柄失败: {expression} -> {e}")
             raise e
-            
+
     def dispatch_event(self, locator: Locator, event_type: str, event_init: Dict = None):
         try:
             locator.dispatch_event(event_type, event_init)
@@ -490,7 +479,8 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"分派事件失败: {locator} -> {event_type} -> {e}")
             raise e
-            
+
+    # 以下为读取/操作元素属性的便捷方法（仍使用 locator(selector)）
     def get_attribute(self, selector: str, name: str) -> Optional[str]:
         try:
             value = self.locator(selector).get_attribute(name)
@@ -499,7 +489,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取属性失败: {selector} -> {name} -> {e}")
             raise e
-            
+
     def inner_text(self, selector: str) -> str:
         try:
             text = self.locator(selector).inner_text()
@@ -508,7 +498,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取内部文本失败: {selector} -> {e}")
             raise e
-            
+
     def text_content(self, selector: str) -> Optional[str]:
         try:
             content = self.locator(selector).text_content()
@@ -517,7 +507,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取文本内容失败: {selector} -> {e}")
             raise e
-            
+
     def input_value(self, selector: str) -> str:
         try:
             value = self.locator(selector).input_value()
@@ -526,7 +516,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取输入值失败: {selector} -> {e}")
             raise e
-            
+
     def is_checked(self, selector: str) -> bool:
         try:
             checked = self.locator(selector).is_checked()
@@ -535,7 +525,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查选中状态失败: {selector} -> {e}")
             raise e
-            
+
     def is_disabled(self, selector: str) -> bool:
         try:
             disabled = self.locator(selector).is_disabled()
@@ -544,7 +534,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查禁用状态失败: {selector} -> {e}")
             raise e
-            
+
     def is_editable(self, selector: str) -> bool:
         try:
             editable = self.locator(selector).is_editable()
@@ -553,7 +543,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查可编辑状态失败: {selector} -> {e}")
             raise e
-            
+
     def is_enabled(self, selector: str) -> bool:
         try:
             enabled = self.locator(selector).is_enabled()
@@ -562,7 +552,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查启用状态失败: {selector} -> {e}")
             raise e
-            
+
     def is_hidden(self, selector: str) -> bool:
         try:
             hidden = self.locator(selector).is_hidden()
@@ -571,7 +561,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查隐藏状态失败: {selector} -> {e}")
             raise e
-            
+
     def is_visible(self, selector: str) -> bool:
         try:
             visible = self.locator(selector).is_visible()
@@ -580,7 +570,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"检查可见状态失败: {selector} -> {e}")
             raise e
-            
+
     def count(self, selector: str) -> int:
         try:
             count = self.locator(selector).count()
@@ -589,7 +579,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取元素数量失败: {selector} -> {e}")
             raise e
-            
+
     def all_inner_texts(self, selector: str) -> List[str]:
         try:
             texts = self.locator(selector).all_inner_texts()
@@ -598,7 +588,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取所有内部文本失败: {selector} -> {e}")
             raise e
-            
+
     def all_text_contents(self, selector: str) -> List[str]:
         try:
             contents = self.locator(selector).all_text_contents()
@@ -607,7 +597,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"获取所有文本内容失败: {selector} -> {e}")
             raise e
-            
+
     def set_input_files(self, selector: str, files: str):
         try:
             self.locator(selector).set_input_files(files)
@@ -615,15 +605,15 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"设置文件输入失败: {selector} -> {files} -> {e}")
             raise e
-            
+
     def clear(self, selector: str):
         try:
-            self.locator(selector).clear()
+            self.locator(selector).fill("")
             logger.info(f"清空输入: {selector}")
         except Exception as e:
             logger.error(f"清空输入失败: {selector} -> {e}")
             raise e
-            
+
     def blur(self, selector: str):
         try:
             self.locator(selector).blur()
@@ -631,7 +621,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"失去焦点操作失败: {selector} -> {e}")
             raise e
-            
+
     def tap(self, selector: str, **kwargs):
         try:
             self.locator(selector).tap(**kwargs)
@@ -639,7 +629,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"触摸点击失败: {selector} -> {e}")
             raise e
-            
+
     def scroll_into_view_if_needed(self, selector: str, **kwargs):
         try:
             self.locator(selector).scroll_into_view_if_needed(**kwargs)
@@ -647,7 +637,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"滚动到视图失败: {selector} -> {e}")
             raise e
-            
+
     def select_text(self, selector: str, **kwargs):
         try:
             self.locator(selector).select_text(**kwargs)
@@ -655,7 +645,7 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"选择文本失败: {selector} -> {e}")
             raise e
-            
+
     def set_checked(self, selector: str, checked: bool, **kwargs):
         try:
             self.locator(selector).set_checked(checked, **kwargs)
@@ -663,23 +653,22 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"设置选中状态失败: {selector} -> {checked} -> {e}")
             raise e
-    
+
     def mock_api(self, url_pattern: str, response: Dict, method: str = "GET"):
         try:
-            # 使用Playwright的路由功能模拟API
             def handle_route(route):
                 route.fulfill(
                     status=200,
                     content_type="application/json",
                     body=json.dumps(response)
                 )
-                
+
             self.page.route(url_pattern, handle_route)
             logger.info(f"模拟API: {method} {url_pattern}")
         except Exception as e:
             logger.error(f"模拟API失败: {method} {url_pattern} -> {e}")
             raise e
-            
+
     def unmock_api(self, url_pattern: str):
         try:
             self.page.unroute(url_pattern)

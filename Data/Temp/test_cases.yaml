@@ -1,1 +1,2 @@
-{}
+TestSuits/p04_pw_gjgl/test_pw_web_gigl.py::TestCase02:
+- test_add_article[case_data0]

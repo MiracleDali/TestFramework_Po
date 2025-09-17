@@ -15,6 +15,9 @@ from Base.baseYaml import write_yaml
 from Base.baseLogger import Logger
 from selenium import webdriver
 from playwright.sync_api import sync_playwright
+import pathlib
+Base_dir = pathlib.Path(__file__).resolve().parent
+
 
 logger = Logger('conftest.py').getLogger()
 
@@ -89,7 +92,7 @@ def page(request, playwright_instance):
     
     # 获取测试函数名称用于命名 trace 文件
     test_name = request.node.name
-    trace_path = f"Traces/trace_{test_name}.zip"
+    trace_path = Path(Base_dir) / 'Traces' / f'trace_{test_name}.zip'
     
     yield page
     

@@ -53,4 +53,4 @@ class TestCase03():
         fp = FilePage()
         fp.upload_file(case_data['rename'], case_data['description'], case_data['file_path'])
         fp.assert_upload_file_page(case_data['rename'], case_data['description'])  
-        # fp.assert_upload_file_databases(case_data['rename'], case_data['description'])
+        fp.assert_upload_file_databases(case_data['rename'], case_data['description'])

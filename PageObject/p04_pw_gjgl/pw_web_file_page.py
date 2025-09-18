@@ -72,10 +72,11 @@ class FilePage(WebBase):
 
     def assert_upload_file_databases(self, rename, description):
         """ 断言上传文件成功-数据库 """
+        rename = rename.split('.')[0]
         db = MysqlHelp()
-        sql = f"select title, description from dlfileentry where title={rename} order by createDate desc limit 1;"
-        res = db.mysql_db_select(sql=sql)
-        assert res[0]['title'] == rename.split('.')[0], '[断言] 文件上传失败!'
+        sql = f"select title, description from dlfileentry where title = '{rename}';"
+        res = db.mysql_db_select(sql)
+        assert res[0]['title'] == rename, '[断言] 文件上传失败!'
         assert res[0]['description'] == description, '[断言] 文件上传失败!'
         logger.info('[断言] 文件上传成功 数据库验证')
 
@@ -94,10 +95,12 @@ if __name__ == '__main__':
     # 将 Page 对象存储在全局管理器中
     GlobalManager().set_value('page', page)
 
-    from PageObject.p04_pw_gjgl.pw_web_login_page import LoginPage
-    LoginPage().login('test01', '1111')
+    # from PageObject.p04_pw_gjgl.pw_web_login_page import LoginPage
+    # LoginPage().login('test01', '1111')
     ap = FilePage()
-    ap.delete_folder()
+    # ap.delete_folder()
     # ap.upload_file(rename='sdf.txt', description='qweqweqweqweqwe', file_path='666666.txt')
     # ap.assert_upload_file_page(rename='sdf.txt', description='qweqweqweqweqwe')
+
+    ap.assert_upload_file_databases(rename='rerere', description='rererer')
 

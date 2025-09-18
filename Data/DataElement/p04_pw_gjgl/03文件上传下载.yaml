@@ -1,0 +1,19 @@
+# 文档上传下载，功能模块
+file_page: "//span[text()='文档上传下载']"
+new_folder_btn: "//input[@type='button' and @value='新建文件夹']"
+folder_name: "[id='_20_name']"
+folder_desc: "[id='_20_description']"
+save_folder: "//input[@type='submit' and @value='保存并返回']"
+first_naem: "//form/ul[2][@class='lfr-component']/li[2]/a"
+first_delete_btn: "//form/ul[2][@class='lfr-component']/li[2]/nobr/a[2]"
+delete_masige_success: ['xpath', ".//div[@class='portlet-content']/div/div/div"]
+
+# 上传文件
+select_folder: "//ul[@class='lfr-component']/li[2]/a"
+upload_btn: "//div/input[@type='button' and @value='上传文档']"
+iframe_file: "[id='dlFileEntryUploadProgress-iframe']"
+select_file_box: "[name='_20_file'][id='_20_file']"
+file_rename: "[id='_20_title']"
+file_description: "[id='_20_description']"
+submit_file: "//input[@type='submit' and @value='上传文档']"
+first_file_name: "//table[@class='taglib-search-iterator']/tbody/tr[2]/td[1]/a"

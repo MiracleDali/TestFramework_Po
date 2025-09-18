@@ -36,14 +36,60 @@ class ArticlePage(WebBase):
             # self.fill('content', content)
             self.wait_for_timeout(1000)
         logger.info('退出iframe')
-
-        # 保存
+        # 保存并返回
         self.wait_for_timeout(1000)
         self.click('save')
         self.wait_for_timeout(1000)
         # 查询
         self.click('select_btn')
         logger.info('添加稿件结束')
+
+    
+    def delete_article(self):
+        """ 删除稿件 """
+        logger.info('删除稿件开始')
+        self.click('select_btn')
+        self.wait_for_timeout(1000)
+        self.click('cleck')       # 选择第一条稿件
+        self.wait_for_timeout(500)
+        hand = self.on_dialog(handler_type='accept')    # 处理下面的弹窗
+        self.click('delete_btn')        # 进行删除  点击完这里会弹窗
+        off = self.off_dialog(hand)    # 注销掉弹窗处理
+
+    
+    def dialog_example(self):
+        """ 测试弹窗 脚本稳定性 """
+        self.goto('https://www.byhy.net/cdn2/files/selenium/test4.html')
+        self.wait_for_timeout(1000)
+
+        hand = self.on_dialog(handler_type='accept')
+        self.click('test_data01') 
+        self.click('test_data02')
+        self.click('test_data03')
+        off = self.off_dialog(hand)
+        self.wait_for_timeout(3000)
+
+        hand = self.on_dialog(handler_type='dismiss')
+        self.click('test_data02')
+        self.click('test_data03')
+        self.off_dialog(hand)
+        self.wait_for_timeout(1000)
+
+        hand = self.on_dialog(handler_type='accept', text='老子牛逼')
+        self.click('test_data03')
+        self.off_dialog(hand)
+        self.wait_for_timeout(1000)
+
+        hand = self.on_dialog(get_message=True)
+        self.click('test_data02')
+        print(self.dialog_message)  # 获取弹窗消息
+        self.click('test_data03')
+        print(self.dialog_message)  # 获取弹窗消息
+        self.off_dialog(hand)
+        self.wait_for_timeout(1000)
+
+
+
     
 
 if __name__ == '__main__':
@@ -62,4 +108,6 @@ if __name__ == '__main__':
     from PageObject.p04_pw_gjgl.pw_web_login_page import LoginPage
     LoginPage().login('test01', '1111')
     ap = ArticlePage()
-    ap.add_article('测试添加稿件', '测试添加稿件')
+    ap.delete_article()
+
+    # ap.dialog_example()

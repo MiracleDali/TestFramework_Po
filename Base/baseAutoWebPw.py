@@ -39,6 +39,8 @@ class WebBase(DataBase):
         self.default_timeout = 10000  # 超时时间（毫秒）
         # 当前上下文 frame（如果已切换到 iframe，设置为 Frame 对象；否则为 None）
         self._current_frame: Optional[Frame] = None
+        # 记录当前对话框消息
+        self.dialog_message = None
 
     # -----------------------
     # Frame / IFrame 支持
@@ -216,65 +218,75 @@ class WebBase(DataBase):
         if self._current_frame:
             return self._current_frame.locator(pw_selector, has_text=has_text, has=has_locator)
         else:
-            logger.info(f"locator -> {selector}={pw_selector}")
+            logger.info(f"locator -> 【{selector}】={pw_selector}")
             return self.page.locator(pw_selector, has_text=has_text, has=has_locator)
 
     # -----------------------
     # Dialog / 弹窗 处理
     # -----------------------
-    def wait_for_dialog(self, timeout: Optional[int] = None) -> Dialog:
-        try:
-            timeout = timeout or self.default_timeout
-            dialog: Dialog = self.page.wait_for_event("dialog", timeout=timeout)
-            logger.info(f"wait_for_dialog -> type={dialog.type} message={dialog.message}")
-            return dialog
-        except Exception as e:
-            logger.error(f"wait_for_dialog 失败 -> {e}")
-            raise
 
-    def accept_dialog(self, prompt_text: Optional[str] = None, timeout: Optional[int] = None):
-        try:
-            dialog = self.wait_for_dialog(timeout=timeout)
-            if prompt_text is not None:
-                dialog.accept(prompt_text)
-                logger.info(f"accept_dialog -> accepted with prompt_text={prompt_text}")
-            else:
-                dialog.accept()
-                logger.info("accept_dialog -> accepted")
-        except Exception as e:
-            logger.error(f"accept_dialog 失败 -> {e}")
-            raise
+    def handle_accept_dialog(self, dialog, text=None):
+        """处理弹窗并点击确定按钮"""
+        self.page.wait_for_timeout(1000)
+        if dialog.type == 'prompt' and text is not None:
+            dialog.accept(text)
+            logger.info(f"prompt {dialog.type} 点击确定，输入内容: {text}")
+        else:
+            dialog.accept()
+            logger.info(f"{dialog.type} 类型弹窗，点击确定")
 
-    def dismiss_dialog(self, timeout: Optional[int] = None):
-        try:
-            dialog = self.wait_for_dialog(timeout=timeout)
-            dialog.dismiss()
-            logger.info("dismiss_dialog -> dismissed")
-        except Exception as e:
-            logger.error(f"dismiss_dialog 失败 -> {e}")
-            raise
+    def handle_dismiss_dialog(self, dialog):
+        """处理弹窗并点击取消按钮"""
+        self.page.wait_for_timeout(500)
+        dialog.dismiss()
+        logger.info(f"{dialog.type} 类型弹窗，点击取消")
 
-    def get_last_dialog_message(self, timeout: Optional[int] = None) -> str:
-        try:
-            dialog = self.wait_for_dialog(timeout=timeout)
-            msg = dialog.message
-            logger.info(f"get_last_dialog_message -> {msg}")
-            return msg
-        except Exception as e:
-            logger.error(f"get_last_dialog_message 失败 -> {e}")
-            raise
+    def handle_get_dialog_message(self, dialog):
+        """获取弹窗消息,并取消弹窗"""
+        self.page.wait_for_timeout(500)
+        message = dialog.message
+        dialog.dismiss()
+        logger.info(f"获取到弹窗信息: {message}")
+        self.dialog_message = message
 
-    def on_dialog(self, handler: Callable[[Dialog], None]):
+    def on_dialog(self, handler_type=None, text=None, get_message=False):
+        """注册弹窗处理函数
+        Args:
+            handler_type: 处理类型 'accept'|'dismiss'
+            text: 需要输入的文本（仅对prompt类型的弹窗有效）
+            get_message: 是否获取弹窗消息
+        参数使用：
+            self.on_dialog(handler_type='accept')
+            self.on_dialog(handler_type='dismiss')
+            self.on_dialog(handler_type='accept', text='hello, world!')
+            self.on_dialog(get_message=True)
+        hand = self.on_dialog(handler_type='accept')  # 使用
+        off = self.off_dialog(hand)  # 注销
+        """
+        def dialog_handler(dialog):
+            if handler_type == 'accept':
+                self.handle_accept_dialog(dialog, text)
+            elif handler_type == 'dismiss':
+                self.handle_dismiss_dialog(dialog)
+            elif get_message:
+                return self.handle_get_dialog_message(dialog)
+        
         try:
-            self.page.on("dialog", handler)
-            logger.info("on_dialog -> handler registered")
+            self.page.on("dialog", dialog_handler)
+            logger.info(f"on_dialog -> handler registered with type: {handler_type}")
+            return dialog_handler
         except Exception as e:
             logger.error(f"on_dialog 注册失败 -> {e}")
             raise
 
     def off_dialog(self, handler: Callable[[Dialog], None]):
+        """ 
+        注销之前注册的对话框处理函数。
+        hand = self.on_dialog(handler_type='accept')  # 使用
+        off = self.off_dialog(hand)  # 注销
+        """
         try:
-            self.page.off("dialog", handler)
+            self.page.remove_listener("dialog", handler)
             logger.info("off_dialog -> handler unregistered")
         except Exception as e:
             logger.error(f"off_dialog 注销失败 -> {e}")
@@ -319,9 +331,9 @@ class WebBase(DataBase):
     def click(self, selector: str, **kwargs):
         try:
             self.locator(selector).click(**kwargs)
-            logger.info(f"点击元素: {selector}")
+            logger.info(f"点击元素: 【{selector}】")
         except Exception as e:
-            logger.error(f"点击元素失败: {selector} -> {e}")
+            logger.error(f"点击元素失败: 【{selector}】 -> {e}")
             raise e
 
     def dblclick(self, selector: str, **kwargs):
@@ -600,7 +612,8 @@ class WebBase(DataBase):
 
     def set_input_files(self, selector: str, files: str):
         try:
-            self.locator(selector).set_input_files(files)
+            upload = self.locator(selector)
+            upload.set_input_files(files)
             logger.info(f"设置文件输入: {selector} -> {files}")
         except Exception as e:
             logger.error(f"设置文件输入失败: {selector} -> {files} -> {e}")

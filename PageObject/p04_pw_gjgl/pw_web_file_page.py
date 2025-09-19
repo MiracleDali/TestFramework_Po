@@ -54,13 +54,13 @@ class FilePage(WebBase):
         self.click('upload_btn')
         logger.info('切换iframe')
         with self.frame_context(selector='iframe_file'):
-            path = pathlib.Path(BP.DATA_TEMP_DIR).joinpath(file_path)
-            self.set_input_files('select_file_box', path)
+            # path = pathlib.Path(BP.DATA_TEMP_DIR).joinpath(file_path)
+            self.set_input_files('select_file_box', file_path)
             self.fill('file_rename', rename)
             self.fill('file_description', description)
             self.click('submit_file')
         logger.info('退出iframe')
-        self.wait_for_timeout(1000)
+        self.wait_for_timeout(500)
         logger.info('上传文件结束')
 
     def assert_upload_file_page(self, rename, description):
@@ -80,6 +80,18 @@ class FilePage(WebBase):
         assert res[0]['description'] == description, '[断言] 文件上传失败!'
         logger.info('[断言] 文件上传成功 数据库验证')
 
+    def download_file(self, save_path):
+        """ 下载文件 """
+        logger.info('下载文件开始')
+        file_path = self.expect_download('first_file_name', save_path=save_path)
+        logger.info(f'下载文件结束, 文件路径为: {file_path}')
+
+    def assert_download_file(self):
+        """ 断言下载文件成功 """
+        assert pathlib.Path(self.last_file_download_path).exists(), '[断言] 文件下载失败!'
+        self.wait_for_timeout(500)
+        pathlib.Path(self.last_file_download_path).unlink()
+        logger.info('[断言] 文件下载成功')
     
 
 if __name__ == '__main__':
@@ -95,12 +107,14 @@ if __name__ == '__main__':
     # 将 Page 对象存储在全局管理器中
     GlobalManager().set_value('page', page)
 
-    # from PageObject.p04_pw_gjgl.pw_web_login_page import LoginPage
-    # LoginPage().login('test01', '1111')
+    from PageObject.p04_pw_gjgl.pw_web_login_page import LoginPage
+    LoginPage().login('test01', '1111')
     ap = FilePage()
-    # ap.delete_folder()
-    # ap.upload_file(rename='sdf.txt', description='qweqweqweqweqwe', file_path='666666.txt')
+    ap.create_folder(name='创建文件夹', description='创建文件夹描述')
+    ap.upload_file(rename='is_renamee.txt', description='qweqweqweqweqwe', file_path=r"D:\文件上传下载\666666.txt")
+    ap.download_file(save_path=r"D:\文件上传下载")
+    ap.assert_download_file()
     # ap.assert_upload_file_page(rename='sdf.txt', description='qweqweqweqweqwe')
 
-    ap.assert_upload_file_databases(rename='rerere', description='rererer')
+    # ap.assert_upload_file_databases(rename='rerere', description='rererer')
 

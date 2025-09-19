@@ -82,9 +82,9 @@ class ArticlePage(WebBase):
 
         hand = self.on_dialog(get_message=True)
         self.click('test_data02')
-        print(self.dialog_message)  # 获取弹窗消息
+        print(self.last_dialog_message)  # 获取弹窗消息
         self.click('test_data03')
-        print(self.dialog_message)  # 获取弹窗消息
+        print(self.last_dialog_message)  # 获取弹窗消息
         self.off_dialog(hand)
         self.wait_for_timeout(1000)
 

@@ -17,7 +17,7 @@ from Base.baseLogger import Logger
 from Base.basePath import BasePath as BP
 from Base.utils import read_config_ini
 from Base.baseYaml import read_yaml
-from Base.baseExcel import ExcelRead
+from Base.baseExcel import Excel_Csv_Edit
 
 logger = Logger('Base/baseData.py').getLogger()
 
@@ -45,6 +45,7 @@ def is_file_exist(file_path, yaml_name):
     """
     abs_path = file_path.get(yaml_name)
     if not abs_path:
+        logger.error(f"file_path_list: {file_path}")
         raise FileNotFoundError(f"文件不存在，请检查文件路径是否正确 & 请确认测试 type 是否正确（HTTP、WEB、CLIENT）: {yaml_name}")
     return abs_path
 
@@ -94,14 +95,15 @@ class DataDriver:
         if data_type == 'YamlDriver':
             return read_yaml(data_path)
         elif data_type == 'ExcelDriver':
-            return ExcelRead(data_path).dict_date()
+            return Excel_Csv_Edit(data_path).dict_date()
         else:
             raise Exception('请检查配置文件，DATA_DRIVER_TYPE 是否正确')
 
 
 if __name__ == '__main__':
-    res = init_file_path(r'D:\2_python_file\TestFramework_Po\Data\DataElement\project01_auto_test')
-    res1 = is_file_exist(res, 'Web元素信息')
+    path = (Path(BP.DATA_DRIVER_DIR) / 'YamlDriver' / 'p01_client_xsglxt')
+    res = init_file_path(path)
+    res1 = is_file_exist(res, '01学生管理系统登录')
     print(res1)
 
     # element = DataBase('接口元素信息登陆')
@@ -113,5 +115,5 @@ if __name__ == '__main__':
     # print(res)
 
     driver = DataDriver()
-    res = driver.get_case_data('excel')
+    res = driver.get_case_data('01')
     print(res)

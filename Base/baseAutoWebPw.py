@@ -7,6 +7,7 @@ from typing import Dict, Any, Optional, List, Iterator, Callable
 from datetime import datetime
 import json
 import contextlib
+import pathlib
 
 # 获取当前文件的父目录的父目录（项目根目录）
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -36,16 +37,25 @@ class WebBase(DataBase):
             self.page.set_default_timeout(int(self.config['WEB自动化配置']['pw_timeout']))
         except Exception:
             self.page.set_default_timeout(10000)
+
         self.default_timeout = 10000  # 超时时间（毫秒）
         # 当前上下文 frame（如果已切换到 iframe，设置为 Frame 对象；否则为 None）
         self._current_frame: Optional[Frame] = None
-        # 记录当前对话框消息
-        self.dialog_message = None
+        # 记录当前获取到的弹窗消息
+        self.last_dialog_message = None
+        # 记录最后一次文件下载的具体路径
+        self.last_file_download_path = None
 
     # -----------------------
     # Frame / IFrame 支持
     # -----------------------
     def get_frame_by_name(self, name: str) -> Optional[Frame]:
+        """
+        通过frame的名称获取Frame对象
+        parameter: name: frame元素的name属性值
+        return: Optional[Frame]: 找到的Frame对象，如果未找到或出错则返回None
+        exception: 捕获所有异常并记录错误日志，不会向上抛出
+        """
         try:
             frame = self.page.frame(name=name)
             logger.info(f"get_frame_by_name: name={name} -> {frame}")
@@ -55,7 +65,14 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_url(self, url_substring: str) -> Optional[Frame]:
+        """
+        通过frame的URL中包含的特定字符串获取Frame对象
+        parameter: url_substring: 需要在frame URL中查找的子字符串
+        return: Optional[Frame]: 找到的Frame对象，如果未找到或出错则返回None
+        exception: 捕获所有异常并记录错误日志，不会向上抛出
+        """
         try:
+            # 遍历页面中的所有frame，检查URL是否包含指定子字符串
             for f in self.page.frames:
                 if f.url and url_substring in f.url:
                     logger.info(f"get_frame_by_url: found frame with url {f.url}")
@@ -67,7 +84,14 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_index(self, index: int) -> Optional[Frame]:
+        """
+        通过frame在页面中的索引位置获取Frame对象
+        parameter: index: frame的索引，从0开始
+        return: Optional[Frame]: 找到的Frame对象，如果索引越界或出错则返回None
+        exception: 
+        """
         try:
+            # 获取页面所有frames列表，并通过索引访问特定frame
             frames = self.page.frames
             frame = frames[index]
             logger.info(f"get_frame_by_index: index={index} -> {frame}")
@@ -78,14 +102,20 @@ class WebBase(DataBase):
 
     def get_frame_by_selector(self, selector: str, timeout: Optional[int] = None) -> Optional[Frame]:
         """
-        通过选择器找到 <iframe> 或 <frame> 元素并返回该元素对应的 Frame（使用 element_handle.content_frame()）
-        selector 必须是 YAML key（顶层 key）或直接是 selector 字符串 —— 但按当前严格逻辑，应使用 YAML key。
-        找不到 YAML key 时将抛出 KeyError。
+        通过CSS选择器或YAML key找到iframe/frame元素并返回对应的Frame对象
+        parameter: selector: CSS选择器或YAML key
+        parameter: timeout: 等待元素出现的超时时间(毫秒)
+        return: Optional[Frame]: 找到的Frame对象，如果未找到或出错则返回None
+        exception: 如果selector是YAML key但在配置中找不到，会抛出KeyError
         """
         try:
+            # 设置超时时间，使用类默认值或传入的值
             timeout = timeout or self.default_timeout
+            # 解析selector，如果是YAML key则转换为实际的CSS选择器
             resolved = self._resolve_selector_if_key(selector)
+            # 等待元素出现
             self.page.wait_for_selector(resolved, timeout=timeout)
+            # 查询页面中的元素
             elem: Optional[ElementHandle] = self.page.query_selector(resolved)
             if not elem:
                 logger.warning(f"get_frame_by_selector: 未找到元素 {selector} (resolved: {resolved})")
@@ -101,6 +131,12 @@ class WebBase(DataBase):
             return None
 
     def get_frame_by_element(self, element: ElementHandle) -> Optional[Frame]:
+        """
+        通过元素对象获取对应的Frame对象
+        parameter: element: 已获取的iframe/frame元素的ElementHandle对象
+        return: Optional[Frame]: 找到的Frame对象，如果未找到或出错则返回None
+        exception: 
+        """
         try:
             frame = element.content_frame()
             logger.info(f"get_frame_by_element -> {frame}")
@@ -113,9 +149,10 @@ class WebBase(DataBase):
                     url_substring: Optional[str] = None, selector: Optional[str] = None,
                     timeout: Optional[int] = None) -> Optional[Frame]:
         """
-        切换当前上下文到某个 frame（存储到 self._current_frame），返回找到的 Frame。
-        优先级: selector -> name -> index -> url_substring
-        selector 应传 YAML key（顶层 key）
+        切换当前操作的上下文到指定的frame，并将其设置为当前frame
+        parameter: 同 enter_frame
+        return: Optional[Frame]: 找到的Frame对象，如果未找到或出错则返回None
+        notice: 参数优先级: selector > name > index > url_substring
         """
         try:
             frame = None
@@ -132,6 +169,7 @@ class WebBase(DataBase):
 
             if not frame:
                 raise RuntimeError("未找到目标 frame")
+            # 设置当前操作的frame上下文
             self._current_frame = frame
             logger.info(f"enter_frame -> current_frame set to {frame.url}")
             return frame
@@ -140,6 +178,9 @@ class WebBase(DataBase):
             raise
 
     def exit_frame(self):
+        """
+        退出当前frame，回到主frame
+        """
         try:
             self._current_frame = None
             logger.info("exit_frame -> 回到主页面上下文")
@@ -151,12 +192,30 @@ class WebBase(DataBase):
     def frame_context(self, *, name: Optional[str] = None, index: Optional[int] = None,
                       url_substring: Optional[str] = None, selector: Optional[str] = None,
                       timeout: Optional[int] = None) -> Iterator[Frame]:
+        """
+        上下文管理器，用于临时切换到指定frame，执行操作后自动恢复之前的frame上下文
+        Args:
+            name: frame的name属性值
+            index: frame在页面中的索引位置
+            url_substring: frame的URL中包含的子字符串
+            selector: CSS选择器或YAML key
+            timeout: 等待元素出现的超时时间(毫秒)
+        return:
+            Iterator[Frame]: 生成器，返回找到的Frame对象
+        usage:
+            with self.frame_context(selector="my_frame"):
+                在frame上下文中执行操作
+                self.click("button")
+        exception: 如果在进入frame时出错，会记录错误日志并向上抛出
+        """
+        # 保存当前的frame上下文，以便后续恢复
         prev = self._current_frame
         try:
             frame = self.enter_frame(name=name, index=index, url_substring=url_substring, selector=selector,
                                      timeout=timeout)
             yield frame
         finally:
+            # 无论是否发生异常，都会恢复之前的frame上下文
             self._current_frame = prev
             logger.info("frame_context exit -> 恢复之前的 frame 上下文")
 
@@ -169,7 +228,7 @@ class WebBase(DataBase):
             password: "//input[@type='submit']"
         返回 selector 字符串，例如 "[name='_58_login']" 或 "//input[@type='submit']"
         """
-        res = self.get_element_data(change_data)  # 你的 DataBase.get_element_data()
+        res = self.get_element_data(change_data)  # DataBase.get_element_data()
         if not isinstance(res, dict):
             raise TypeError("get_element_data 返回值必须是字典类型，且顶层包含 locator key")
         if locator_key not in res:
@@ -247,7 +306,7 @@ class WebBase(DataBase):
         message = dialog.message
         dialog.dismiss()
         logger.info(f"获取到弹窗信息: {message}")
-        self.dialog_message = message
+        self.last_dialog_message = message
 
     def on_dialog(self, handler_type=None, text=None, get_message=False):
         """注册弹窗处理函数
@@ -461,6 +520,11 @@ class WebBase(DataBase):
         return expect(self.locator(selector))
 
     def evaluate(self, expression: str, arg: Any = None) -> Any:
+        """
+        执行JavaScript
+        expression: JavaScript 代码
+        arg: 传递给 JavaScript 代码的参数
+        """
         try:
             if self._current_frame:
                 result = self._current_frame.evaluate(expression, arg)
@@ -473,6 +537,11 @@ class WebBase(DataBase):
             raise e
 
     def evaluate_handle(self, expression: str, arg: Any = None) -> Any:
+        """
+        执行JavaScript并返回句柄
+        expression: JavaScript 代码
+        arg: 传递给 JavaScript 代码的参数
+        """
         try:
             if self._current_frame:
                 result = self._current_frame.evaluate_handle(expression, arg)
@@ -485,6 +554,12 @@ class WebBase(DataBase):
             raise e
 
     def dispatch_event(self, locator: Locator, event_type: str, event_init: Dict = None):
+        """
+        分派事件
+        locator: 元素选择器
+        event_type: 事件类型
+        event_init: 事件初始化参数
+        """
         try:
             locator.dispatch_event(event_type, event_init)
             logger.info(f"分派事件: {locator} -> {event_type}")
@@ -494,6 +569,11 @@ class WebBase(DataBase):
 
     # 以下为读取/操作元素属性的便捷方法（仍使用 locator(selector)）
     def get_attribute(self, selector: str, name: str) -> Optional[str]:
+        """
+        获取元素的属性值
+        selector: 元素选择器
+        name: 属性名称
+        """
         try:
             value = self.locator(selector).get_attribute(name)
             logger.info(f"获取属性: {selector} -> {name} = {value}")
@@ -503,6 +583,10 @@ class WebBase(DataBase):
             raise e
 
     def inner_text(self, selector: str) -> str:
+        """
+        获取元素的内部文本（不包含子元素）
+        selector: 元素选择器
+        """
         try:
             text = self.locator(selector).inner_text()
             logger.info(f"获取内部文本: {selector} -> {text}")
@@ -512,6 +596,10 @@ class WebBase(DataBase):
             raise e
 
     def text_content(self, selector: str) -> Optional[str]:
+        """
+        获取元素的文本内容（包含子元素）
+        selector: 元素选择器
+        """
         try:
             content = self.locator(selector).text_content()
             logger.info(f"获取文本内容: {selector} -> {content}")
@@ -521,6 +609,10 @@ class WebBase(DataBase):
             raise e
 
     def input_value(self, selector: str) -> str:
+        """
+        获取输入框的值
+        selector: 元素选择器
+        """
         try:
             value = self.locator(selector).input_value()
             logger.info(f"获取输入值: {selector} -> {value}")
@@ -530,6 +622,10 @@ class WebBase(DataBase):
             raise e
 
     def is_checked(self, selector: str) -> bool:
+        """
+        检查元素是否选中
+        selector: 元素选择器
+        """
         try:
             checked = self.locator(selector).is_checked()
             logger.info(f"检查选中状态: {selector} -> {checked}")
@@ -539,6 +635,10 @@ class WebBase(DataBase):
             raise e
 
     def is_disabled(self, selector: str) -> bool:
+        """
+        检查元素是否禁用
+        selector: 元素选择器
+        """
         try:
             disabled = self.locator(selector).is_disabled()
             logger.info(f"检查禁用状态: {selector} -> {disabled}")
@@ -548,6 +648,10 @@ class WebBase(DataBase):
             raise e
 
     def is_editable(self, selector: str) -> bool:
+        """
+        检查元素是否可编辑
+        selector: 元素选择器
+        """
         try:
             editable = self.locator(selector).is_editable()
             logger.info(f"检查可编辑状态: {selector} -> {editable}")
@@ -557,6 +661,10 @@ class WebBase(DataBase):
             raise e
 
     def is_enabled(self, selector: str) -> bool:
+        """
+        检查元素是否启用
+        selector: 元素选择器
+        """
         try:
             enabled = self.locator(selector).is_enabled()
             logger.info(f"检查启用状态: {selector} -> {enabled}")
@@ -566,6 +674,10 @@ class WebBase(DataBase):
             raise e
 
     def is_hidden(self, selector: str) -> bool:
+        """
+        检查元素是否隐藏
+        selector: 元素选择器
+        """
         try:
             hidden = self.locator(selector).is_hidden()
             logger.info(f"检查隐藏状态: {selector} -> {hidden}")
@@ -575,6 +687,10 @@ class WebBase(DataBase):
             raise e
 
     def is_visible(self, selector: str) -> bool:
+        """
+        检查元素是否可见
+        selector: 元素选择器
+        """
         try:
             visible = self.locator(selector).is_visible()
             logger.info(f"检查可见状态: {selector} -> {visible}")
@@ -584,6 +700,10 @@ class WebBase(DataBase):
             raise e
 
     def count(self, selector: str) -> int:
+        """
+        获取元素数量
+        selector: 元素选择器
+        """
         try:
             count = self.locator(selector).count()
             logger.info(f"获取元素数量: {selector} -> {count}")
@@ -593,6 +713,10 @@ class WebBase(DataBase):
             raise e
 
     def all_inner_texts(self, selector: str) -> List[str]:
+        """
+        获取所有内部文本
+        selector: 元素选择器
+        """
         try:
             texts = self.locator(selector).all_inner_texts()
             logger.info(f"获取所有内部文本: {selector} -> {len(texts)} 个元素")
@@ -602,6 +726,10 @@ class WebBase(DataBase):
             raise e
 
     def all_text_contents(self, selector: str) -> List[str]:
+        """
+        获取所有文本内容
+        selector: 元素选择器
+        """
         try:
             contents = self.locator(selector).all_text_contents()
             logger.info(f"获取所有文本内容: {selector} -> {len(contents)} 个元素")
@@ -611,6 +739,11 @@ class WebBase(DataBase):
             raise e
 
     def set_input_files(self, selector: str, files: str):
+        """
+        上传文件
+        selector: 文件上传的元素选择器
+        files: 文件路径
+        """
         try:
             upload = self.locator(selector)
             upload.set_input_files(files)
@@ -618,8 +751,48 @@ class WebBase(DataBase):
         except Exception as e:
             logger.error(f"设置文件输入失败: {selector} -> {files} -> {e}")
             raise e
+        
+    def expect_download(self, selector: str, save_path: str, timeout: int = 3000) -> Any:
+        """ 
+        下载文件 
+        selector: 触发下载的元素选择器
+        save_dir: 文件保存目录路径
+        timeout: 等待下载的超时时间(毫秒)，默认30秒
+        """
+        try:
+            with self.page.expect_download(timeout=timeout) as download_info:
+                # 触发下载的操作
+                self.click(selector)
+                self.wait_for_load_state()
+            # 获取 Download 对象
+            download = download_info.value
+            # 获取建议的文件名
+            suggested_filename = download.suggested_filename
+            # 构建保存路径
+            file_path = pathlib.Path(save_path).joinpath(suggested_filename)
+            # 检查下载是否失败
+            if download.failure():
+                logger.error(f"下载失败: {download.failure()}")
+                return None
+            
+            download.save_as(file_path)
+
+            logger.info(f"下载文件路径: url: {download.url}")
+            logger.info(f"下载文件: 触发元素【{selector}】 -> 保存路径: {file_path}")
+
+            self.last_file_download_path = file_path
+            return file_path
+        
+        except TimeoutError:
+            logger.error(f"下载超时: {selector} -> {save_path}")
+            return None
+        except Exception as e:
+            logger.error(f"下载文件失败: {selector} -> {save_path} -> {e}")
+            return None
+
 
     def clear(self, selector: str):
+        """ 清空 """
         try:
             self.locator(selector).fill("")
             logger.info(f"清空输入: {selector}")

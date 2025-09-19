@@ -13,6 +13,7 @@ print(sys.path)
 import requests
 import urllib3
 from requests import session
+import requests
 
 from Base.baseData import DataBase
 from Base.baseLogger import Logger
@@ -23,7 +24,7 @@ logger = Logger('Base/baseAutoHTTP.py').getLogger()
 
 class ApiBase(DataBase):
     """ 接口自动化基类 """
-
+ 
     # 创建session--会话保持器
     session = requests.session()
 

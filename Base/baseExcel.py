@@ -3,12 +3,23 @@
 # excel,文件读写
 """
 
+import sys
+from pathlib import Path
+Base_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(Base_dir))
+
 import pandas as pd
+from Base.basePath import BasePath as BP
 
 
-class ExcelRead:
-    def __init__(self, excel_path: str, sheet_name: str = "Sheet1"):
-        self.table = pd.read_excel(excel_path, sheet_name)
+class Excel_Csv_Edit:
+    def __init__(self, file_path: str, sheet_name: str = None):
+
+        if sheet_name:
+            self.table = pd.read_excel(file_path, sheet_name)
+        elif not sheet_name:
+            self.table = pd.read_csv(file_path)
+
         # 获取第一行为key值
         self.keys = self.table.columns.tolist()
         # 获取行数和列数
@@ -85,10 +96,22 @@ class ExcelWrite:
             index=False,    # 不写入行索引
         )
 
+    def write_csv(self, csv_path: str, list_data):
+        # 将list_data(字典列表)转换为dataframe
+        self.df = pd.DataFrame(list_data)
+        # print(self.df)
+
+        # 写入csv文件
+        self.df.to_csv(
+            csv_path,
+            index=False,    # 不写入行索引
+        )
+
 
 
 if __name__ == "__main__":
-    file_path = r'D:\2_python_file\TestFramework_Po\Data\DataDriver\ExcelDriver\project01_auto_test\ExcelWrite.xlsx'
+    file_path = (Path(BP.DATA_DRIVER_DIR) / 'ExcelDriver' / 'p03_http_gjgl' / '01.csv')
+    # file_path = r'D:\2_python_file\TestFramework_Po\Data\DataDriver\ExcelDriver\p03_http_gjgl\01.csv'
 
     # 创建字典列表 可以使用下面两种方法进行创建
     d_01 = [
@@ -96,7 +119,6 @@ if __name__ == "__main__":
         {"id": 2, "name": "张三"},
         {"id": 33, "name": "张三"},
     ]
-
     d_02 = ({
         "id": [i for i in range(1, 5)],
         "name": [f'name{i}' for i in range(1, 5)],
@@ -105,14 +127,24 @@ if __name__ == "__main__":
 
     # 写入excel
     write = ExcelWrite()
-    write.write_excel(file_path, 'Sheet1', d_02)
+    # write.write_excel(file_path, 'Sheet1', d_02)
+    # 写入csv
+    write.write_csv(file_path, d_02)
+
 
     # 读取excel
-    data = ExcelRead(file_path, 'Sheet1')
-    print('excel转换为字典信息,', data.dict_date())
-    print('excel,行信息', data.get_row_info(1))
-    print(data.get_col_info("name"))
-    print(data.get_cell_info(1, "id"))
+    # data = Excel_Csv_Edit(file_path, 'Sheet1')
+    # print('excel转换为字典信息,', data.dict_date())
+    # print('excel,行信息', data.get_row_info(1))
+    # print(data.get_col_info("name"))
+    # print(data.get_cell_info(1, "id"))
+
+    # 读取csv
+    data = Excel_Csv_Edit(file_path)
+    print('csv转换为字典信息,', data.dict_date())
+    # print('excel,行信息', data.get_row_info(1))
+    # print(data.get_col_info("name"))
+    # print(data.get_cell_info(1, "id"))
 
 
 

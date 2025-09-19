@@ -5,6 +5,11 @@
 
 import yaml
 import os
+import sys
+from pathlib import Path
+Base_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(Base_dir))
+from Base.basePath import BasePath as BP
 
 def read_yaml(yaml_path):
     """
@@ -51,4 +56,6 @@ def write_yaml(yaml_path, data):
 
 
 if __name__ == '__main__':
-    print(read_yaml(r'D:\2_python_file\TestFramework_Po\Data\DataDriver\YamlDriver\p01_client_xsglxt\02学生管理系统注册.yaml'))
+    path = (Path(BP.DATA_DRIVER_DIR) / 'YamlDriver' / 'p01_client_xsglxt' / '01学生管理系统登录.yaml')
+    # print(path)
+    print(read_yaml(path))

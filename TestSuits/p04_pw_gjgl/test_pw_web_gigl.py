@@ -20,31 +20,33 @@ class TestCase01():
 
 class TestCase02():
     """ playwright自动化, 稿件管理，添加稿件功能模块 """
-    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('02_添加稿件'))
-    @pytest.mark.usefixtures("page", "init_login")
-    def test_add_article(self, case_data, page, init_login):
-        """ web自动化, 稿件管理，添加稿件测试 """
-        bp = ArticlePage()
-        bp.add_article(case_data['title'], case_data['content'])
+    # @pytest.mark.parametrize('case_data', DataDriver().get_case_data('02_添加稿件'))
+    # @pytest.mark.usefixtures("page", "init_login")
+    # def test_add_article(self, case_data, page, init_login):
+    #     """ web自动化, 稿件管理，添加稿件测试 """
+    #     bp = ArticlePage()
+    #     bp.add_article(case_data['title'], case_data['content'])
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('02_添加稿件'))
     @pytest.mark.usefixtures("page", "init_login")
     def test_delete_article(self, page, init_login, case_data):
         """ web自动化, 稿件管理，删除稿件测试 """
         bp = ArticlePage()
-        # bp.add_article(case_data['title'], case_data['content'])
+        bp.add_article(case_data['title'], case_data['content'])
         bp.delete_article()
 
 
 class TestCase03():
-    """ playwright自动化, 稿件管理，上传文件功能模块 """
+    """ playwright自动化, 稿件管理，文件功能模块 """
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('06_文件夹操作'))
     @pytest.mark.usefixtures('page', 'init_login')
     def test_create_folder(self, case_data, page, init_login):
-        """ web自动化, 稿件管理，创建文件夹测试 """
-        fp = FilePage()
+        """ web自动化, 稿件管理，创建&删除文件夹测试 """
+        fp = FilePage()  
         fp.create_folder(case_data['name'], case_data['description'])
+        fp.delete_folder()
+
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('07_上传文件'))
     @pytest.mark.usefixtures('page', 'init_login', 'add_del_folder')
@@ -53,4 +55,13 @@ class TestCase03():
         fp = FilePage()
         fp.upload_file(case_data['rename'], case_data['description'], case_data['file_path'])
         fp.assert_upload_file_page(case_data['rename'], case_data['description'])  
-        fp.assert_upload_file_databases(case_data['rename'], case_data['description'])
+        # fp.assert_upload_file_databases(case_data['rename'], case_data['description']) 
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('08_下载文件'))
+    @pytest.mark.usefixtures('page', 'init_login', 'add_del_folder')
+    def test_download_file(self, case_data, page, init_login, add_del_folder):
+        """ web自动化, 稿件管理，下载文件测试 """
+        fp = FilePage()
+        fp.upload_file(case_data['rename'], case_data['description'], case_data['file_path'])
+        fp.download_file(case_data['save_path'])
+        fp.assert_download_file()

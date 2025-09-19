@@ -79,7 +79,7 @@ def page(request, playwright_instance):
         browser = None
         pytest.fail(f"不支持的浏览器类型: {browser_type}")
     
-    context = browser.new_context()
+    context = browser.new_context(accept_downloads=True)
     context.tracing.start(snapshots=True, sources=True, screenshots=True)
     page = context.new_page()
 

@@ -17,3 +17,6 @@ file_rename: "[id='_20_title']"
 file_description: "[id='_20_description']"
 submit_file: "//input[@type='submit' and @value='上传文档']"
 first_file_name: "//table[@class='taglib-search-iterator']/tbody/tr[2]/td[1]/a"
+
+
+# 下载文件

@@ -1,0 +1,78 @@
+add_api_article: # 新增稿件接口
+  method: post
+  url: /group/10779/articles
+  headers:
+#    Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryDjAvDQmEYiXKlmUb
+#    Upgrade-Insecure-Requests: 1
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+  params:
+    'p_p_id': '15'
+    'p_p_lifecycle': '1'
+    'p_p_state': 'maximized'
+    'p_p_mode': 'view'
+    '_15_struts_action': '/journal/edit_article'
+  data:
+    '_15_portletResource': ''
+    '_15_cmd': 'add'
+    '_15_tabs2': ''
+    '_15_redirect': '/group/10779/articles?p_p_id=15&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_15_struts_action=%2Fjournal%2Fview&_15_tabs1=articles'
+    '_15_originalRedirect': '/group/10779/articles?p_p_id=15&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_15_struts_action=%2Fjournal%2Fview&_15_tabs1=articles'
+    '_15_referringPortletResource': ''
+    '_15_groupId': '10780'
+    '_15_articleId': ''
+    '_15_version': '1.0'
+    '_15_content': '${_15_content}'
+    '_15_articleURL': 'http://127.0.0.1/group/10779/articles?p_p_id=15&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_15_struts_action=%2Fjournal%2Fedit_article'
+    '_15_approve': ''
+    '_15_saveAndContinue': ''
+    '_15_deleteArticleIds': '_version_1.0'
+    '_15_expireArticleIds': '_version_1.0'
+    '_15_tabs1TabsScroll': ''
+    '_15_newArticleId': ''
+    '_15_autoArticleId': 'true'
+    '_15_title': '${_15_title}'
+    '_15_structureId':
+    '_15_templateId':
+    '_15_type': 'general'
+    '_15_tagsEntries':
+    '_15_indexable': 'true'
+    '_15_indexableCheckbox': 'on'
+    '_15_displayDateMonth': '8'
+    '_15_displayDateDay': '21'
+    '_15_displayDateYear': '2025'
+    '_15_displayDateHour': '5'
+    '_15_displayDateMinute': '19'
+    '_15_displayDateAmPm': '1'
+    '_15_neverExpire': 'true'
+    '_15_neverExpireCheckbox': 'on'
+    '_15_neverReview': 'true'
+    '_15_neverReviewCheckbox': 'on'
+
+
+
+search_api:
+  method: post
+  url: /group/10779/articles
+  headers:
+    User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36
+  params:
+    'p_p_id': '15'
+    'p_p_lifecycle': '0'
+    'p_p_state': 'maximized'
+    'p_p_mode': 'view'
+    '_15_struts_action': '/journal/view'
+    '_15_tabs1': 'articles'
+  data:
+    '_15_cmd': ''
+    '_15_tabs1TabsScroll': ''
+    '_15_groupId': ''
+    '_15_deleteArticleIds': ''
+    '_15_expireArticleIds': ''
+    '_15_advancedSearch': 'false'
+    '_15_keywords': '${_15_keywords}'
+    '_15_andOperator': '1'
+    '_15_searchArticleId': ''
+    '_15_version': ''
+    '_15_title': ''
+    '_15_content': ''
+

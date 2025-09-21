@@ -1,5 +1,7 @@
+import time
 from Base.baseData import DataDriver
 from PageObject.p03_http_gjgl.api_login_page import LoginPage
+from PageObject.p03_http_gjgl.api_article_page import ApiArticle
 import pytest
 
 
@@ -11,3 +13,17 @@ class TestApiCase01():
         lp = LoginPage()
         res = lp.login(case_data['username'], case_data['password'])
         lp.assert_login_success(res, case_data['title'])
+
+
+class TestApiCase02():
+    """ 接口自动化稿件管理系统-稿件管理模块"""
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('02稿件新增'))
+    @pytest.mark.usefixtures('init_login')
+    def test_add_article(self, case_data, init_login):
+        """ 接口自动化-添加稿件测试 """
+        ap = ApiArticle()
+        ap.add_article(case_data['title'], case_data['content'])
+        ap.assert_add_article(case_data['title'])
+        ap.assert_add_article_databases(case_data['title'], case_data['content'])
+        time.sleep(1)

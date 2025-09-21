@@ -80,7 +80,6 @@ class DataBase:
             else:
                 return read_yaml(self.abs_path)
         except Exception as e:
-            # print(e)
             logger.exception(e)
 
 

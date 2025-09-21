@@ -62,7 +62,8 @@ class ApiBase(DataBase):
             return res
 
         except Exception as e:
-            logger.error('接口请求失败', e)
+            print(e)
+            logger.exception('接口请求失败', e)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ from Base.baseData import DataDriver
 from PageObject.p03_http_gjgl.api_login_page import LoginPage
 from PageObject.p03_http_gjgl.api_article_page import ApiArticle
 import pytest
+import os
 
 
 class TestApiCase01():

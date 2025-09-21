@@ -65,19 +65,23 @@ class DataBase:
         if not self.run_config['AUTO_TYPE'] == 'CLIENT':
             # print(self.api_path, self.yaml_name, 6666666666666666666666)
             self.abs_path = is_file_exist(self.api_path, self.yaml_name)
-            print(self.abs_path)
+            # print(self.abs_path)
 
     def get_element_data(self, change_data=None):
         """
         change_data: 是否修改数据
         """
-        if change_data:
-            with open(self.abs_path, 'r', encoding='utf-8') as f:
-                cfg = f.read()
-                content = Template(cfg).safe_substitute(**change_data)
-                return yaml.load(content, Loader=yaml.FullLoader)
-        else:
-            return read_yaml(self.abs_path)
+        try:
+            if change_data:
+                with open(self.abs_path, 'r', encoding='utf-8') as f:
+                    cfg = f.read()
+                    content = Template(cfg).safe_substitute(**change_data)
+                    return yaml.load(content, Loader=yaml.FullLoader)
+            else:
+                return read_yaml(self.abs_path)
+        except Exception as e:
+            # print(e)
+            logger.exception(e)
 
 
 class DataDriver:
@@ -101,10 +105,10 @@ class DataDriver:
 
 
 if __name__ == '__main__':
-    path = (Path(BP.DATA_DRIVER_DIR) / 'YamlDriver' / 'p01_client_xsglxt')
-    res = init_file_path(path)
-    res1 = is_file_exist(res, '01学生管理系统登录')
-    print(res1)
+    # path = (Path(BP.DATA_DRIVER_DIR) / 'YamlDriver' / 'p01_client_xsglxt')
+    # res = init_file_path(path)
+    # res1 = is_file_exist(res, '01学生管理系统登录')
+    # print(res1)
 
     # element = DataBase('接口元素信息登陆')
     # change_data = {
@@ -115,5 +119,5 @@ if __name__ == '__main__':
     # print(res)
 
     driver = DataDriver()
-    res = driver.get_case_data('01')
+    res = driver.get_case_data('01稿件系统登录')
     print(res)

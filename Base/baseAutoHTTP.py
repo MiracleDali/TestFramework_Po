@@ -10,7 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 sys.path.append(str(BASE_DIR))
 print(sys.path)
 
-import requests
 import urllib3
 from requests import session
 import requests
@@ -37,7 +36,6 @@ class ApiBase(DataBase):
         try:
             logger.info(f'{self.yaml_name}-{api_name}:接口调用开始')
             yaml_data = self.get_element_data(change_data)[api_name]
-            # print(yaml_data)
 
             yaml_data['url'] = urljoin(self.run_config['TEST_URL'], yaml_data['url'])
 
@@ -59,7 +57,7 @@ class ApiBase(DataBase):
 
             logger.info(f'接口响应时间为：{res.elapsed.total_seconds()}')
             logger.debug(f'接口响应状态码为：{res.status_code}')
-            logger.debug(f'接口响应体数据为：{res.text}')
+            # logger.debug(f'接口响应体数据为：{res.text}')
             logger.info(f'{self.yaml_name}-{api_name}:接口调用结束')
             return res
 
@@ -68,5 +66,5 @@ class ApiBase(DataBase):
 
 
 if __name__ == '__main__':
-    api = ApiBase('接口元素信息登陆')
-    api.request_base('home_api')
+    api = ApiBase('01登陆接口信息')
+    # api.request_base('home_api')

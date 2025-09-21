@@ -110,7 +110,7 @@ class ExcelWrite:
 
 
 if __name__ == "__main__":
-    file_path = (Path(BP.DATA_DRIVER_DIR) / 'ExcelDriver' / 'p03_http_gjgl' / '01.csv')
+    file_path = (Path(BP.DATA_DRIVER_DIR) / 'ExcelDriver' / 'p03_http_gjgl' / '01稿件系统登录.csv')
     # file_path = r'D:\2_python_file\TestFramework_Po\Data\DataDriver\ExcelDriver\p03_http_gjgl\01.csv'
 
     # 创建字典列表 可以使用下面两种方法进行创建
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     write = ExcelWrite()
     # write.write_excel(file_path, 'Sheet1', d_02)
     # 写入csv
-    write.write_csv(file_path, d_02)
+    # write.write_csv(file_path, d_02)
 
 
     # 读取excel

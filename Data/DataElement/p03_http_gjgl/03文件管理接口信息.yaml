@@ -1,4 +1,25 @@
 add_folder: # 新增文件夹接口
   method: post
   url: /group/10779/upload
-  headres:
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'
+  params:
+    p_p_id: '20'
+    p_p_lifecycle: '1'
+    p_p_state: 'maximized'
+    p_p_mode: 'view'
+    _20_struts_action: '/document_library/edit_folder'
+  data:
+    _20_cmd: 'add'
+    _20_redirect: '/group/10779/upload'
+    _20_folderId: '0'
+    _20_parentFolderId: '0'
+    _20_tabs1TabsScroll: ''
+    _20_name: '${_20_name}'
+    _20_description: '${_20_description}'
+
+query_folder_api: # 查询文件夹接口
+  method: get
+  url: /group/10779/upload
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'

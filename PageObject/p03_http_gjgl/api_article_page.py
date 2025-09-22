@@ -40,10 +40,10 @@ class ApiArticle(ApiBase):
     def assert_search_article_database(self, title):
         """ 稿件查询数据库断言 """
         db = MysqlHelp()
-        sql = f'select title, content, approved from  journalarticle where title = {title}'
+        sql = f'select title, content, approved from  journalarticle where title = "{title}"'
         res = db.mysql_db_select(sql)
         assert res[0]['title'] == title, f'[断言] 稿件查询数据库查询失败: {title}'
-        # assert res[0]['approved'] == 0, f'[断言] 稿件新增数据库查询失败: {res[0]['approved']}'
+        assert res[0]['approved'] == 0, f'[断言] 稿件新增数据库查询失败: {res[0]['approved']}'
         logger.info('[断言] 稿件查询数据库查询成功')
 
 
@@ -72,7 +72,6 @@ class ApiArticle(ApiBase):
         """ 稿件删除 """
         # 查询稿件
         id = self.search_article(title)[0]
-
         change_data = {
             '_15_deleteArticleIds': f'{id}_version_1.0',
             '_15_rowIds': f'{id}_version_1.0'
@@ -91,7 +90,7 @@ class ApiArticle(ApiBase):
         """ 稿件删除数据库断言 """
         db = MysqlHelp()
         # sql = 'select title, content, approved from  journalarticle order by createDate desc limit 1'
-        sql = f'select count(*) from  journalarticle where title = {title}'
+        sql = f'select count(*) from  journalarticle where title = "{title}"'
         res = db.mysql_db_select(sql)
         assert res[0]['count(*)'] == 0, '[断言] 稿件删除数据库查询失败'
         logger.info('[断言] 稿件删除数据库查询成功')

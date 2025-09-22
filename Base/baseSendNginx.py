@@ -111,7 +111,7 @@ class SendNginx(object):
                 logger.info(f'{self.local_html_report} 报告不存在')
 
         else:
-            logger.info(f'暂不支持改报告类型:{self.report_type}')
+            logger.info(f'暂不支持发送该类型报告:{self.report_type}')
 
 
 

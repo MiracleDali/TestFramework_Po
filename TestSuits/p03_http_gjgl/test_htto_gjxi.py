@@ -26,7 +26,7 @@ class TestApiCase02():
         ap = ApiArticle()
         ap.add_article(case_data['title'], case_data['content'])
         ap.assert_add_article(case_data['title'])
-        # ap.assert_add_article_databases(case_data['title'], case_data['content'])
+        ap.assert_add_article_databases(case_data['title'], case_data['content'])
         time.sleep(1)
 
 
@@ -35,10 +35,10 @@ class TestApiCase02():
     def test_delete_article_case02(self, case_data, init_login):
         """ 接口自动化-测试稿件删除 """
         ap = ApiArticle()
-        ap.add_article(case_data['title'], '删除测试！！！')
+        # ap.add_article(case_data['title'], '删除测试！！！')
         ap.delete_article(case_data['title'])
         ap.assert_delete_article(case_data['title'])
-        # ap.assert_delete_article_databases(case_data['title'])
+        ap.assert_delete_article_databases(case_data['title'])
 
 
     @pytest.mark.parametrize('add_del_article_edit', DataDriver().get_case_data('04稿件修改'), indirect=True)    
@@ -48,7 +48,7 @@ class TestApiCase02():
         ap = ApiArticle()
         ap.edit_article(add_del_article_edit['title'], add_del_article_edit['edit_title'], add_del_article_edit['edit_content'])
         ap.assert_add_article(add_del_article_edit['edit_title'])
-        # ap.assert_add_article_databases(add_del_article_edit['edit_title'], add_del_article_edit['edit_content'])
+        ap.assert_add_article_databases(add_del_article_edit['edit_title'], add_del_article_edit['edit_content'])
         # time.sleep(0.2)
 
     @pytest.mark.parametrize('add_del_article', DataDriver().get_case_data('05稿件查询'), indirect=True)    
@@ -58,4 +58,4 @@ class TestApiCase02():
         ap = ApiArticle()
         res = ap.search_article(title=add_del_article['title'])
         ap.assert_search_article(res, add_del_article['title'])
-        # ap.assert_search_article_database(add_del_article['title'])
+        ap.assert_search_article_database(add_del_article['title'])

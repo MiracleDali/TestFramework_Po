@@ -27,17 +27,17 @@ def run_main():
     test_case = os.path.join(BP.TEST_SUITE_DIR, run_config['TEST_PROJECT'])
 
     if run_config['REPORT_TYPE'] == 'ALLURE':
-        pytest.main(['-sv', f'--alluredir={BP.ALLURE_RESULT}', test_case])
+        pytest.main(['-v', f'--alluredir={BP.ALLURE_RESULT}', test_case])
         os.system(f'allure generate {BP.ALLURE_RESULT} -o {BP.ALLURE_REPORT} --clean')
         file_all_dele(BP.ALLURE_RESULT)
 
     elif run_config['REPORT_TYPE'] == 'HTML':
         report_path = os.path.join(BP.HTML_DIR, 'auto_report.html')
-        pytest.main(['-sv', f'--html={report_path}', '--self-contained-html', test_case])
+        pytest.main(['-v', f'--html={report_path}', '--self-contained-html', test_case])
 
     elif run_config['REPORT_TYPE'] == 'XML':
         report_path = os.path.join(BP.XML_DIR, 'auto_report.xml')
-        pytest.main(['-sv', f'--junitxml={report_path}', test_case])
+        pytest.main(['-v', f'--junitxml={report_path}', test_case])
     else:
         print(f'暂不支持{run_config["REPORT_TYPE"]}报告类型')
 

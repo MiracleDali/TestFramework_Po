@@ -85,7 +85,7 @@ delete_article: # 删除稿件接口
     p_p_id: '15'
     p_p_lifecycle: '1'
     p_p_state: 'maximized'
-    p_p_mode: view
+    p_p_mode: 'view'
     _15_struts_action: '/journal/edit_article'
     _15_redirect: '/group/10779/articles?p_p_id=15&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_15_struts_action=%2Fjournal%2Fview&_15_tabs1=articles'
   data:

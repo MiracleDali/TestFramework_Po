@@ -1,0 +1,4 @@
+add_folder: # 新增文件夹接口
+  method: post
+  url: /group/10779/upload
+  headres:

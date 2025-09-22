@@ -45,7 +45,8 @@ def is_file_exist(file_path, yaml_name):
     """
     abs_path = file_path.get(yaml_name)
     if not abs_path:
-        logger.error(f"file_path_list: {file_path}")
+        logger.exception(f"file_path_list: {file_path}")
+        logger.exception(f"{yaml_name}")
         raise FileNotFoundError(f"文件不存在，请检查文件路径是否正确 & 请确认测试 type 是否正确（HTTP、WEB、CLIENT）: {yaml_name}")
     return abs_path
 

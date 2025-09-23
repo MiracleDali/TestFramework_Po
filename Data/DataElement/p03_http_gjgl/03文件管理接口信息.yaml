@@ -48,7 +48,6 @@ file_upload_api: # 文件上传接口
   method: post
   url: /group/10779/upload
   headers:
-    # Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryABC123
     User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
   params:
     p_p_id: '20'
@@ -57,7 +56,7 @@ file_upload_api: # 文件上传接口
     p_p_mode: 'view'
     _20_struts_action: '/document_library/edit_file_entry'
   data:
-    20_cmd: "add"
+    _20_cmd: "add"
     _20_redirect: "/group/10779/upload?p_p_id=20&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column1&p_p_col_count=1&_20_struts_action=%2Fdocument_library%2Fview&_20_folderId=${folderId}"
     _20_referringPortletResource: ""
     _20_uploadProgressId: "dlFileEntryUploadProgress"

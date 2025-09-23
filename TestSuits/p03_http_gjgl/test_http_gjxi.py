@@ -72,7 +72,7 @@ class TestApiCase03():
         af = ApiFile()
         af.add_folder(case_data['folder_naem'], case_data['folder_description'])
         af.assert_add_folder(case_data['folder_naem'])
-        # af.assert_add_folder_databases(case_data['folder_naem'], case_data['folder_description'])
+        af.assert_add_folder_databases(case_data['folder_naem'], case_data['folder_description'])
         af.delete_folder(case_data['folder_naem'])
         af.assert_delete_folder(case_data['folder_naem'])
 
@@ -84,5 +84,5 @@ class TestApiCase03():
         af = ApiFile()
         res = af.upload_file(case_data['renaem'], case_data['description'])
         af.assert_upload_file(res, case_data['renaem'])
-        # af.assert_upload_file_databases()
+        af.assert_upload_file_databases(case_data['renaem'], case_data['description'])
 

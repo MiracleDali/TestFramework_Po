@@ -74,7 +74,7 @@ class ApiFile(ApiBase):
         folder_id = self.query_folder()[0][0]
         print('folder_id', folder_id)
         change_data = {
-            '_20_title': rename,
+            '_20_title': rename.split('.')[0],
             '_20_description': description,
             'folderId': folder_id
         }
@@ -84,13 +84,13 @@ class ApiFile(ApiBase):
         }
         res = self.request_base('file_upload_api', change_data=change_data, files=files)
         logger.info(f'文件上传结束')
-        logger.info(res.text)
+        # logger.info(res.text)
         return res.text
     
     def assert_upload_file(self, res, rename):
         """ 文件上传页面验证 """
         name = re.findall('id="_20_title" name="_20_title" style="width: 350px; " type="text" value="(.*?)"', res)[0]
-        assert name == rename, '[断言] 文件上传页面验证失败'
+        assert name == rename.split('.')[0], '[断言] 文件上传页面验证失败'
         logger.info(f'[断言] 文件上传页面验证成功')
 
     def assert_upload_file_databases(self, rename, description):
@@ -98,7 +98,7 @@ class ApiFile(ApiBase):
         mysql = MysqlHelp()
         sql = f"SELECT title,description FROM dlfileentry ORDER BY createDate DESC LIMIT 1;"
         res = mysql.mysql_db_select(sql)
-        assert res[0]['title'] == rename.strip('.')[0], '[断言] 文件上传数据库验证失败'
+        assert res[0]['title'] == rename.split('.')[0], '[断言] 文件上传数据库验证失败'
         assert res[0]['description'] == description, '[断言] 文件上传数据库验证失败'
         logger.info(f'[断言] 文件上传数据库验证成功')
 
@@ -140,19 +140,19 @@ if __name__ == '__main__':
     lp.login('test01', '1111')
 
     af = ApiFile()
-    # res = af.add_folder('测试新增文件夹', '测试新增文件夹描述')
-    # af.assert_add_folder('测试新增文件夹')
-    # af.assert_add_folder_databases('测试新增文件夹', '测试新增文件夹描述')
+    res = af.add_folder('测试新增文件夹', '测试新增文件夹描述')
+    af.assert_add_folder('测试新增文件夹')
+    af.assert_add_folder_databases('测试新增文件夹', '测试新增文件夹描述')
 
-    res = af.upload_file('reame_upload_file.txt', '测试上传文件描述')
-    af.assert_upload_file(res, 'reame_upload_file.txt')
-    # af.assert_upload_file_databases('reame_upload_file.txt', '测试上传文件描述')
+    res = af.upload_file('rename_upload_file.txt', '测试上传文件描述')
+    af.assert_upload_file(res, 'rename_upload_file.txt')
+    af.assert_upload_file_databases('rename_upload_file.txt', '测试上传文件描述')
 
-    # res = af.query_file('reame_upload_file.txt')
-    # af.download_file(res, 'download_file.txt')
-    # af.assert_download_file('download_file.txt')
+    res = af.query_file('rename_upload_file.txt')
+    af.download_file(res, 'download_file.txt')
+    af.assert_download_file('download_file.txt')
 
-    # af.delete_folder('测试新增文件夹')
-    # af.assert_delete_folder('测试新增文件夹')
+    af.delete_folder('测试新增文件夹')
+    af.assert_delete_folder('测试新增文件夹')
 
     

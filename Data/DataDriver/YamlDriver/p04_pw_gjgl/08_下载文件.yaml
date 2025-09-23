@@ -1,4 +1,4 @@
 - rename: '修改稿件1.txt'
   description: '修改稿件1的描述'
-  file_path:  'd:\文件上传下载\666666.txt'
-  save_path: 'd:\文件上传下载'
+  file_path:  'Data\Temp\file_upload_download\文件上传下载测试.txt'
+  save_path: 'Data\Temp\file_upload_download'

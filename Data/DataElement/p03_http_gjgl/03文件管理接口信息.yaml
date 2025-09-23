@@ -18,8 +18,85 @@ add_folder: # 新增文件夹接口
     _20_name: '${_20_name}'
     _20_description: '${_20_description}'
 
+
 query_folder_api: # 查询文件夹接口
   method: get
   url: /group/10779/upload
   headers:
     User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'
+
+
+delete_folder_api: # 删除文件夹接口
+  method: post
+  url: /group/10779/upload
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
+  params:
+    p_p_id: '20'
+    p_p_lifecycle: '1'
+    p_p_state: 'maximized'
+    p_p_mode: 'view'
+    p_p_col_id: 'column-1'
+    p_p_col_count: '1'
+    _20_struts_action: '/document_library/edit_folder'
+    _20_cmd: 'delete'
+    _20_redirect: '/group/10779/upload'
+    _20_folderId: '${_20_folderId}'
+
+
+file_upload_api: # 文件上传接口
+  method: post
+  url: /group/10779/upload
+  headers:
+    # Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryABC123
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
+  params:
+    p_p_id: '20'
+    p_p_lifecycle: '1'
+    p_p_state: 'pop_up'
+    p_p_mode: 'view'
+    _20_struts_action: '/document_library/edit_file_entry'
+  data:
+    20_cmd: "add"
+    _20_redirect: "/group/10779/upload?p_p_id=20&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column1&p_p_col_count=1&_20_struts_action=%2Fdocument_library%2Fview&_20_folderId=${folderId}"
+    _20_referringPortletResource: ""
+    _20_uploadProgressId: "dlFileEntryUploadProgress"
+    _20_folderId: "${folderId}"
+    _20_newFolderId: ""
+    _20_name: ""
+    _20_title: "${_20_title}"
+    _20_description: "${_20_description}"
+
+
+query_file_api: # 查询文件夹接口
+  method: get
+  url: /group/10779/upload
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
+  params:
+    p_p_id: '20'
+    p_p_lifecycle: '0'
+    p_p_state: 'maximized'
+    p_p_mode: 'view'
+    p_p_col_id: 'column-1'
+    p_p_col_count: '1'
+    _20_struts_action: '/document_library/search'
+    _20_redirect: '/group/10779/upload?p_p_id=20&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-1&p_p_col_count=1&_20_struts_action=%2Fdocument_library%2Fview&_20_folderId=${folderid}'
+    _20_breadcrumbsFolderId: '${folderid}'
+    _20_searchFolderId: '${folderid}'
+    _20_keywords: '${_20_keywords}'
+
+
+file_wodnload_api: # 文件下载接口
+  method: get
+  url: /group/10779/upload
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36'
+  params:
+    p_p_id: '20'
+    p_p_lifecycle: '1'
+    p_p_state: 'exclusive'
+    p_p_mode: 'view'
+    _20_struts_action: '/document_library/get_file'
+    _20_folderId: '${_20_folderId}'
+    _20_name: '${_20_name}'

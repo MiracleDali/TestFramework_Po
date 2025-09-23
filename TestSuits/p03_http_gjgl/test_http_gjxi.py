@@ -2,6 +2,7 @@ import time
 from Base.baseData import DataDriver
 from PageObject.p03_http_gjgl.api_login_page import LoginPage
 from PageObject.p03_http_gjgl.api_article_page import ApiArticle
+from PageObject.p03_http_gjgl.api_file_page import ApiFile
 import pytest
 import os
 
@@ -54,8 +55,34 @@ class TestApiCase02():
     @pytest.mark.parametrize('add_del_article', DataDriver().get_case_data('05稿件查询'), indirect=True)    
     @pytest.mark.usefixtures('init_login')
     def test_select_article_case04(self, init_login, add_del_article):
-        """ 测试稿件查询 """
+        """ 接口自动化-测试稿件查询 """
         ap = ApiArticle()
         res = ap.search_article(title=add_del_article['title'])
         ap.assert_search_article(res, add_del_article['title'])
         ap.assert_search_article_database(add_del_article['title'])
+
+
+class TestApiCase03():
+    """ 接口自动化稿件管理系统-文件上传下载模块 """
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('06文件夹新增和删除'))
+    @pytest.mark.usefixtures('init_login')
+    def test_file_case01(self, case_data, init_login):
+        """ 接口自动化-测试文件夹创建删除 """
+        af = ApiFile()
+        af.add_folder(case_data['folder_naem'], case_data['folder_description'])
+        af.assert_add_folder(case_data['folder_naem'])
+        # af.assert_add_folder_databases(case_data['folder_naem'], case_data['folder_description'])
+        af.delete_folder(case_data['folder_naem'])
+        af.assert_delete_folder(case_data['folder_naem'])
+
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('07文件上传下载'))
+    @pytest.mark.usefixtures('init_login', 'add_del_folder')
+    def test_file_case02(self, case_data, init_login, add_del_folder):
+        """ 测试上传文件 """
+        af = ApiFile()
+        res = af.upload_file(case_data['renaem'], case_data['description'])
+        af.assert_upload_file(res, case_data['renaem'])
+        # af.assert_upload_file_databases()
+

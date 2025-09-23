@@ -90,7 +90,7 @@ class FilePage(WebBase):
         """ 断言下载文件成功 """
         assert pathlib.Path(self.last_file_download_path).exists(), '[断言] 文件下载失败!'
         self.wait_for_timeout(500)
-        pathlib.Path(self.last_file_download_path).unlink()
+        # pathlib.Path(self.last_file_download_path).unlink()
         logger.info('[断言] 文件下载成功')
     
 

@@ -48,11 +48,12 @@ def run_main():
         print(f'{run_config["REPORT_TYPE"]}')
         el.send_public_email(text=text, filetype=run_config['REPORT_TYPE'])
 
+    # 发送报告->nginx
+    SendNginx().send_report()
 
 
 if __name__ == '__main__':
     run_main()
-    SendNginx().send_report()
     
 
 

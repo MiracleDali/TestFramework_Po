@@ -47,7 +47,6 @@ class TestCase03():
         fp.create_folder(case_data['name'], case_data['description'])
         fp.delete_folder()
 
-
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('07_上传文件'))
     @pytest.mark.usefixtures('page', 'init_login', 'add_del_folder')
     def test_upload_file(self, case_data, page, init_login, add_del_folder):

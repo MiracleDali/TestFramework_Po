@@ -15,8 +15,7 @@ from Base.baseYaml import write_yaml
 from Base.baseLogger import Logger
 from selenium import webdriver
 from playwright.sync_api import sync_playwright
-import pathlib
-Base_dir = pathlib.Path(__file__).resolve().parent
+
 
 
 logger = Logger('conftest.py').getLogger()
@@ -91,6 +90,8 @@ def page(request, playwright_instance):
     request.cls.context = context
     
     # 获取测试函数名称用于命名 trace 文件
+    import pathlib
+    Base_dir = pathlib.Path(__file__).resolve().parent
     test_name = request.node.name
     trace_path = Path(Base_dir) / 'Traces' / f'trace_{test_name}.zip'
     
@@ -222,8 +223,8 @@ def pytest_runtest_makereport(item):
     report = outcome.get_result()
     extra = getattr(report, 'extra', [])
 
-    # 判断当前用例的执行状态
-    if report.when == 'call' or report.when == 'setup':
+    # 判断当前用例的执行状态（包含 setup/call/teardown）
+    if report.when in ('call', 'setup', 'teardown'):
         xfail = hasattr(report, 'wasxfail')
 
         # 判断自动化测试类型进行截图
@@ -237,8 +238,9 @@ def pytest_runtest_makereport(item):
             screen_ing = _capture_screenshot_pil()  # PIL 截图方法
         else:
             screen_ing = None
-        
+
         # 判断用例结果状态 添加截图
+        # if ((report.failed and not xfail) or report.outcome == "error") and screen_ing:
         if (report.skipped and xfail) or (report.failed and not xfail) and screen_ing:
             file_name = report.nodeid.replace("::", "_") + ".png"
 
@@ -261,7 +263,6 @@ def pytest_runtest_makereport(item):
             elif config['项目运行设置']['REPORT_TYPE'] == 'ALLURE':
                 with allure.step('添加失败用例截图...'):
                     allure.attach.file(BP.SCREENSHOT_PIC, '失败用例截图', allure.attachment_type.PNG)
-
     report.extra = extra
     report.description = str(item.function.__doc__)
 

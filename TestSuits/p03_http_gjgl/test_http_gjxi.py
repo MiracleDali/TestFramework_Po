@@ -70,11 +70,11 @@ class TestApiCase03():
     def test_file_case01(self, case_data, init_login):
         """ 接口自动化-测试文件夹创建删除 """
         af = ApiFile()
-        af.add_folder(case_data['folder_naem'], case_data['folder_description'])
-        af.assert_add_folder(case_data['folder_naem'])
-        af.assert_add_folder_databases(case_data['folder_naem'], case_data['folder_description'])
-        af.delete_folder(case_data['folder_naem'])
-        af.assert_delete_folder(case_data['folder_naem'])
+        af.add_folder(case_data['folder_name'], case_data['folder_description'])
+        af.assert_add_folder(case_data['folder_name'])
+        af.assert_add_folder_databases(case_data['folder_name'], case_data['folder_description'])
+        af.delete_folder(case_data['folder_name'])
+        af.assert_delete_folder(case_data['folder_name'])
 
 
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('07文件上传下载'))
@@ -82,7 +82,17 @@ class TestApiCase03():
     def test_file_case02(self, case_data, init_login, add_del_folder):
         """ 测试上传文件 """
         af = ApiFile()
-        res = af.upload_file(case_data['renaem'], case_data['description'])
-        af.assert_upload_file(res, case_data['renaem'])
-        af.assert_upload_file_databases(case_data['renaem'], case_data['description'])
+        res = af.upload_file(case_data['rename'], case_data['description'])
+        af.assert_upload_file(res, case_data['rename'])
+        af.assert_upload_file_databases(case_data['rename'], case_data['description'])
+
+    @pytest.mark.parametrize('case_data', DataDriver().get_case_data('08文件下载'))
+    @pytest.mark.usefixtures('init_login', 'add_del_folder')
+    def test_file_case03(self, init_login, add_del_folder, case_data):
+        """ 测试下载文件 """
+        af = ApiFile()
+        af.upload_file(case_data['rename'], case_data['description'])
+        res = af.query_file(case_data['rename'])
+        af.download_file(res, case_data['download_file'])
+        af.assert_download_file(case_data['download_file'])
 

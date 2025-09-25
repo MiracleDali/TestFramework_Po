@@ -13,6 +13,7 @@ from Base.basePath import BasePath as BP
 from Base.baseContainer import GlobalManager
 from Base.baseYaml import write_yaml
 from Base.baseLogger import Logger
+from Base.baseAiAnalyse import ai_chat
 from selenium import webdriver
 from playwright.sync_api import sync_playwright
 
@@ -171,7 +172,7 @@ def pytest_metadata(metadata):
 
 
 ####################################################################################################
-############  失败截图
+############  失败截图&错误用例分析
 
 insert_js_html = False
 
@@ -196,6 +197,8 @@ def _capture_screenshot_pw():
         page = GlobalManager().get_value('page')  # 需自行实现获取当前 page 的方法 
         # 进行全页面截图并返回 base64 
         screenshot_bytes = page.screenshot(full_page=True,  type="png")
+        with open(BP.SCREENSHOT_PIC, 'wb') as f:
+            f.write(screenshot_bytes)
         return base64.b64encode(screenshot_bytes).decode('utf-8')
     except Exception as e:
         logger.error(f"Playwright  截图失败: {str(e)}")
@@ -215,13 +218,51 @@ def _capture_screenshot_pil():
     except ImportError:
         pytest.exit('请安装PIL模块')
 
+
+def add_analysis_allure(report, xfail):
+    """
+    添加错误用例分析到allure报告
+    Args:
+        report: 测试报告对象
+        xfail: 是否为预期失败的用例
+    """
+    if report.failed and not xfail:
+        try:
+            error_message = report.longreprtext
+            # ai_system_prompt = "你是一个专业的测试分析专家。请分析以下测试失败的原因，并提供可能的解决方案"
+            user_message = f"测试用例失败分析请求：\
+                             测试用例：{report.nodeid}\
+                             失败阶段：{report.when}\
+                             错误信息：{error_message}\
+                             请给出详细分析，并给出可能的解决方案。"
+            # 调用ai分析
+            ai_analysis = ai_chat(user_message, system_prompt=None)
+            # 添加到报告
+            with allure.step('错误用例分析'):
+                allure.attach(
+                    ai_analysis,
+                    name='错误用例分析',
+                    attachment_type=allure.attachment_type.TEXT,
+                    # extension='md'
+                )
+        except Exception as e:
+            logger.exception(f"错误用例分析失败: {e}")
+            with allure.step('错误用例分析'):
+                allure.attach(
+                    f"错误用例分析失败: {str(e)}",
+                    name='错误用例分析',
+                    attachment_type=allure.attachment_type.TEXT,
+                    # extension='md'
+                )
+
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """ 测试用例执行失败, 截图到报告 """
     outcome = yield
-    pytest_html = item.config.pluginmanager.getplugin('html')
-    report = outcome.get_result()
-    extra = getattr(report, 'extra', [])
+    pytest_html = item.config.pluginmanager.getplugin('html')    # 获取pytest_html插件对象
+    report = outcome.get_result()  # 获取测试报告对象
+    extra = getattr(report, 'extra', [])     # 获取测试报告对象中的 extra 属性
 
     # 判断当前用例的执行状态（包含 setup/call/teardown）
     if report.when in ('call', 'setup', 'teardown'):
@@ -263,6 +304,12 @@ def pytest_runtest_makereport(item):
             elif config['项目运行设置']['REPORT_TYPE'] == 'ALLURE':
                 with allure.step('添加失败用例截图...'):
                     allure.attach.file(BP.SCREENSHOT_PIC, '失败用例截图', allure.attachment_type.PNG)
+        if (report.skipped and xfail) or (report.failed and not xfail) and config['AI配置']['AI_ANALYSE'] == 'yes':
+            logger.info('ai分析开始。。。')
+            add_analysis_allure(report, xfail)
+            logger.info('ai分析完成。。。')
+
+
     report.extra = extra
     report.description = str(item.function.__doc__)
 

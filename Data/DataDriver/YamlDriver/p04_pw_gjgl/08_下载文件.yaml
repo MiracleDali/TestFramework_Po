@@ -1,4 +1,4 @@
 - rename: '修改稿件1.txt'
   description: '修改稿件1的描述'
-  file_path:  'E:\github_manage_project\TestFramework_Po\Data\Temp\file_upload_download\upload_file.txt'
-  save_path: 'E:\github_manage_project\TestFramework_Po\Data\Temp\file_upload_download'
+  file_path:  'Data\Temp\file_upload_download\upload_file.txt'
+  save_path: 'Data\Temp\file_upload_download'

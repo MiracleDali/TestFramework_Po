@@ -6,59 +6,94 @@ import sys
 from pathlib import Path
 # 获取当前文件的父目录的父目录（项目根目录）
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 sys.path.append(str(BASE_DIR))
-from Base.baseData import DataBase
 from Base.baseLogger import Logger
-from Base.basePath import BasePath as Bp
+from Base.basePath import BasePath as BP
+from Base.utils import read_config_ini
 from openai import OpenAI
 
 logger = Logger('Base/baseAiAnalyse.py').getLogger()
 
 
-class StreamChat:
-    """封装流式 ChatCompletion """
-    def __init__(self, api_key: str, base_url: str, model: str):
-        self.client = OpenAI(api_key=api_key, base_url=base_url)
-        self.model = model
 
-    def chat_stream(self, messages: list, extra_body: dict = None):
-        """
-        发送消息并流式接收回复（包含思考过程 + 最终回复）
-        """
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            extra_body=extra_body or {},
-            stream=True
-        )
-        self._process_stream(completion)
+class AiAnalyse():
+    """
+    AI分析类
+    """
+    def __init__(self):
+        self.config = read_config_ini(BP.CONFIG_FILE)
+        self.run_config = self.config['AI配置']
 
-    def _process_stream(self, completion):
-        """处理流数据，分别打印思考过程和完整回复"""
-        is_answering = False
-        print("\n" + "=" * 20 + " 思考过程 " + "=" * 20)
-        for chunk in completion:
-            delta = chunk.choices[0].delta
-            # 输出思考过程
-            if hasattr(delta, "reasoning_content") and delta.reasoning_content:
-                if not is_answering:
-                    print(delta.reasoning_content, end="", flush=True)
-            # 输出最终回答
-            if hasattr(delta, "content") and delta.content:
-                if not is_answering:
-                    print("\n" + "=" * 20 + " 完整回复 " + "=" * 20)
-                    is_answering = True
-                print(delta.content, end="", flush=True)
+        self.client = OpenAI(
+            api_key = self.run_config['API_KEY'],
+            base_url = self.run_config['BASE_URL']
+            )
+        self.model = self.run_config['MODEL']
+        self.system_prompt = self.run_config['SYSTEM_PROMPT']
+        self.enable_thinking = self.run_config.getboolean('ENABLE_THINKING')
+        # print('====================================')
+        # print(self.run_config['BASE_URL'])
+        # print(self.run_config['MODEL'])
+        # print(self.run_config['SYSTEM_PROMPT'])
+        # print(self.run_config['ENABLE_THINKING'])
+        # print('====================================')
+
+    def chat(self, user_message: str, system_prompt: str = None) -> str:
+        """
+        发送消息并返回完整回复
+        Args:
+            user_message: 用户消息
+            system_prompt: 可选的系统提示词，默认使用配置文件中的
+        Returns:
+            str: 完整的回复内容
+        """
+
+        try: 
+            # 构建会话
+            system_prompt = system_prompt or self.system_prompt
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ]
+
+            # 构建其他参数
+            extra_body = {
+                "enable_thinking": self.enable_thinking,
+                "thinking_budget": 50
+            }
+
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                stream=False,
+                # **extra_body
+            )
+            return response.choices[0].message.content  # 返回完整回复
+
+        except Exception as e:
+            logger.exception(f"AI分析错误: {e}")
+
+# 创建实例
+_ai_chat = AiAnalyse()
+
+# 外部调用
+def ai_chat(user_message: str, system_prompt: str = None) -> str:
+    """
+    外部调用AI分析
+    Args:
+        user_message: 报错消息
+        system_prompt: 可选的系统提示词，默认使用配置文件中的
+    Returns:
+        str: 完整的回复内容
+    """
+    return _ai_chat.chat(user_message, system_prompt)
 
 
 if __name__ == "__main__":
-    client = StreamChat(
-        api_key="sk-",
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        model="qwen-plus-2025-07-28"
-    )
+    # 测试代码
+    response = ai_chat("你是谁")
+    print(response)
 
-    messages = [{"role": "user", "content": "你是谁"}]
-    client.chat_stream(messages, extra_body={"enable_thinking": True})
 
 

@@ -1,4 +1,3 @@
--- Active: 1761479637360@@192.168.198.128@3306
 import sys
 import pathlib
 Base_dir = pathlib.Path(__file__).resolve().parent.parent.parent

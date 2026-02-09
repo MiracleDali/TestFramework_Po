@@ -56,6 +56,7 @@ class TestCase03():
         fp.assert_upload_file_page(case_data['rename'], case_data['description'])  
         # fp.assert_upload_file_databases(case_data['rename'], case_data['description']) 
 
+    @pytest.mark.file_test
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('08_下载文件'))
     @pytest.mark.usefixtures('page', 'init_login', 'add_del_folder')
     def test_download_file(self, case_data, page, init_login, add_del_folder):

@@ -1,0 +1,12 @@
+__pycache__
+.pytest_cache
+# Traces 文件
+*.zip
+# Log 日志文件
+*.log
+# 虚拟环境文件
+.venv/
+# 报告文件
+Report/Allure
+Report/HTML
+Report/XML

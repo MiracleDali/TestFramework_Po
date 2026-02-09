@@ -31,13 +31,13 @@ class TestApiCase02():
         # ap.assert_add_article_databases(case_data['title'], case_data['content'])
         time.sleep(1)
 
-
+    @pytest.mark.delete_article
     @pytest.mark.parametrize('case_data', DataDriver().get_case_data('03稿件删除'))
     @pytest.mark.usefixtures('init_login')
     def test_delete_article_case02(self, case_data, init_login):
         """ 接口自动化-测试稿件删除 """
         ap = ApiArticle()
-        # ap.add_article(case_data['title'], '删除测试！！！')
+        ap.add_article(case_data['title'], '删除测试！！！')
         ap.delete_article(case_data['title'])
         ap.assert_delete_article(case_data['title'])
         # ap.assert_delete_article_databases(case_data['title'])

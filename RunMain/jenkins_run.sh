@@ -32,7 +32,7 @@ pip install -r ../requirements.txt
 echo "############################################################"
 echo "Build Argument"
 echo "############################################################"
-python3 ./ExtTools/buildargument.py \
+python3 ../ExtTools/buildargument.py \
   --nginx_host "$nginx_host" \
   --nginx_port "$nginx_port" \
   --nginx_user "$nginx_user" \

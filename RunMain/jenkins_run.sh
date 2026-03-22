@@ -33,6 +33,7 @@ echo "pip install  --upgrade-strategy only-if-needed -r ./requirements.txt"
 pip install  --upgrade-strategy only-if-needed -r ./requirements.txt
 
 
+echo ""
 echo "############################################################"
 echo "Build Argument"
 echo "############################################################"

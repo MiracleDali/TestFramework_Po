@@ -26,13 +26,13 @@ echo "pip install -r ../requirements.txt"
 # 4️⃣ 安装 requirements.txt 中列出的第三方库到虚拟环境
 #    依赖会被安装到 /workspace/venv/lib/python3.13/site-packages/
 #    容器删除也不会影响共享卷里的虚拟环境
-pip install -r ../requirements.txt
+pip install -r ./requirements.txt
 
 
 echo "############################################################"
 echo "Build Argument"
 echo "############################################################"
-python3 ../ExtTools/buildargument.py \
+python3 ./ExtTools/buildargument.py \
   --nginx_host "$nginx_host" \
   --nginx_port "$nginx_port" \
   --nginx_user "$nginx_user" \
@@ -50,5 +50,5 @@ echo "############################################################"
 echo ""
 
 # python3 ./RunMain/run.py
-python3 ./run.py
+python3 ./RunMain/run.py
 

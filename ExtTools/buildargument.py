@@ -26,10 +26,7 @@ def print_all_config(config_path):
     """ 打印整个配置文件的内容 """
     config = read_config_ini(config_path)
     
-    print("=" * 60)
     print("配置文件内容:")
-    print("=" * 60)
-    
     # 遍历所有section
     for section_name in config.sections():
         print(f"[{section_name}]")
@@ -40,8 +37,6 @@ def print_all_config(config_path):
             print(f"{option} = {value}")
         
         print()  # 空行分隔
-    
-    print("=" * 60)
 
 def write_config_ini(config_path, *args, **kwargs):
     """ 写入-配置文件.ini """

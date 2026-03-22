@@ -15,21 +15,22 @@ echo "############################################################"
 echo "Installing Requirements..."
 echo "############################################################"
 
-# 1️⃣ 在共享卷 /workspace 下创建一个虚拟环境 venv
-#    虚拟环境可以隔离依赖，避免污染系统 Python
+# 在共享卷 /workspace 下创建一个虚拟环境 venv
+# 虚拟环境可以隔离依赖，避免污染系统 Python
 if [ ! -d "/workspace/venv" ]; then
     echo "创建 venv 虚拟环境到 /workspace/venv"
     python3 -m venv /workspace/venv || { echo "Failed to create virtual environment"; exit 1; }
 fi
-# 2️⃣ 激活虚拟环境
-#    激活后，pip 和 python 命令都会指向 /workspace/venv 里的环境
+# 激活虚拟环境
+# 激活后，pip 和 python 命令都会指向 /workspace/venv 里的环境
 source /workspace/venv/bin/activate
-# 3️⃣ 输出安装命令（可选，仅打印到日志中）
-echo "pip install -r ./requirements.txt"
-# 4️⃣ 安装 requirements.txt 中列出的第三方库到虚拟环境
-#    依赖会被安装到 /workspace/venv/lib/python3.13/site-packages/
-#    容器删除也不会影响共享卷里的虚拟环境
-pip install -r ./requirements.txt --upgrade --only-if-needed
+pip install --upgrade pip
+# 输出安装命令（可选，仅打印到日志中）
+echo "pip install -r ./requirements.txt --upgrade"
+# 安装 requirements.txt 中列出的第三方库到虚拟环境
+# 依赖会被安装到 /workspace/venv/lib/python3.13/site-packages/
+# 容器删除也不会影响共享卷里的虚拟环境
+pip install -r ./requirements.txt --upgrade
 
 
 echo "############################################################"
